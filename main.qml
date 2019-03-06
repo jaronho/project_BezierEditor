@@ -4,7 +4,7 @@ import QtQuick.Window 2.12
 Window {
     visible: true;
     width: container.width + 10;
-    height: container.height + 175;
+    height: container.height + (canvas_quadratic.visible ? 175 : 200);
     title: canvas_quadratic.visible ? qsTr("二次贝塞尔曲线编辑器") : qsTr("三次贝塞尔曲线编辑器");
 
     Item {
@@ -107,8 +107,23 @@ Window {
             onButtonClick: function() {
                 canvas_quadratic.visible = !canvas_quadratic.visible;
                 if (canvas_quadratic.visible) {
+                    input_start_point_x.inputText = canvas_quadratic.start_point_x;
+                    input_start_point_y.inputText = canvas_quadratic.start_point_y;
+                    input_control_point_1_x.inputText = canvas_quadratic.control_point_x;
+                    input_control_point_1_y.inputText = canvas_quadratic.control_point_y;
                     input_control_point_2_x.inputFocus = false;
                     input_control_point_2_y.inputFocus = false;
+                    input_end_point_x.inputText = canvas_quadratic.end_point_x;
+                    input_end_point_y.inputText = canvas_quadratic.end_point_y;
+                } else {
+                    input_start_point_x.inputText = canvas_cubic.start_point_x;
+                    input_start_point_y.inputText = canvas_cubic.start_point_y;
+                    input_control_point_1_x.inputText = canvas_cubic.control_point_1_x;
+                    input_control_point_1_y.inputText = canvas_cubic.control_point_1_y;
+                    input_control_point_2_x.inputText = canvas_cubic.control_point_2_x;
+                    input_control_point_2_y.inputText = canvas_cubic.control_point_2_y;
+                    input_end_point_x.inputText = canvas_cubic.end_point_x;
+                    input_end_point_y.inputText = canvas_cubic.end_point_y;
                 }
             }
         }
@@ -185,9 +200,9 @@ Window {
                     /* 绘制起点 */
                     self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
                     /* 绘制控制点1 */
-                    self.drawCircle(ctx, control1X, control1Y, self.point_radius, "#00CD00");
+                    self.drawCircle(ctx, control1X, control1Y, self.point_radius, "#006400");
                     /* 绘制控制点2 */
-                    self.drawCircle(ctx, control2X, control2Y, self.point_radius, "#76EE00");
+                    self.drawCircle(ctx, control2X, control2Y, self.point_radius, "#00868B");
                     /* 绘制终点 */
                     self.drawCircle(ctx, endX, endY, self.point_radius, "#0000FF");
                 }
@@ -232,7 +247,7 @@ Window {
                     /* 绘制起点 */
                     self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
                     /* 绘制控制点 */
-                    self.drawCircle(ctx, controlX, controlY, self.point_radius, "#00CD00");
+                    self.drawCircle(ctx, controlX, controlY, self.point_radius, "#006400");
                     /* 绘制终点 */
                     self.drawCircle(ctx, endX, endY, self.point_radius, "#0000FF");
                 }
@@ -466,9 +481,10 @@ Window {
         Text {
             id: text_start_point_title;
             anchors.left: container.left;
+            anchors.leftMargin: (container.width - (input_start_point_y.x + input_start_point_y.width - text_start_point_title.x)) / 2;
             anchors.top: text_corner_left_bottom.bottom;
             anchors.topMargin: 10;
-            text: qsTr("起点");
+            text: qsTr("起点:");
             color: "#FF0000";
             font.pixelSize: 20;
             font.bold: true;
@@ -476,9 +492,10 @@ Window {
 
         XTextInput {
             id: input_start_point_x;
-            anchors.left: container.left;
-            anchors.top: text_start_point_title.bottom;
-            anchors.topMargin: 5;
+            anchors.left: text_start_point_title.left;
+            anchors.leftMargin: 90;
+            anchors.top: text_corner_left_bottom.bottom;
+            anchors.topMargin: 10;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
             }
@@ -507,9 +524,10 @@ Window {
 
         XTextInput {
             id: input_start_point_y;
-            anchors.left: container.left;
-            anchors.top: input_start_point_x.bottom;
-            anchors.topMargin: 5;
+            anchors.left: input_start_point_x.right;
+            anchors.leftMargin: 5;
+            anchors.top: text_corner_left_bottom.bottom;
+            anchors.topMargin: 10;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
             }
@@ -539,27 +557,27 @@ Window {
         /* 控制点1坐标 */
         Text {
             id: text_control_point_1_title;
-            anchors.left: input_start_point_x.right;
-            anchors.leftMargin: 30;
-            anchors.top: text_corner_left_bottom.bottom;
-            anchors.topMargin: 10;
-            text: qsTr("控制点1");
-            color: "#00CD00";
+            anchors.left: container.left;
+            anchors.leftMargin: text_start_point_title.anchors.leftMargin;
+            anchors.top: text_start_point_title.bottom;
+            anchors.topMargin: 5;
+            text: canvas_quadratic.visible ? qsTr("控制点:") : qsTr("控制点1:");
+            color: "#006400";
             font.pixelSize: 20;
             font.bold: true;
         }
 
         XTextInput {
             id: input_control_point_1_x;
-            anchors.left: input_start_point_x.right;
-            anchors.leftMargin: 30;
-            anchors.top: text_control_point_1_title.bottom;
+            anchors.left: text_control_point_1_title.left;
+            anchors.leftMargin: 90;
+            anchors.top: text_start_point_title.bottom;
             anchors.topMargin: 5;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
             }
             inputText: canvas_quadratic.visible ? canvas_quadratic.control_point_x : canvas_cubic.control_point_1_x;
-            inputTextColor: "#00CD00";
+            inputTextColor: "#006400";
             inputFont.pixelSize: 20;
             inputFont.bold: true;
             hintText: "";
@@ -583,15 +601,15 @@ Window {
 
         XTextInput {
             id: input_control_point_1_y;
-            anchors.left: input_start_point_y.right;
-            anchors.leftMargin: 30;
-            anchors.top: input_control_point_1_x.bottom;
+            anchors.left: input_control_point_1_x.right;
+            anchors.leftMargin: 5;
+            anchors.top: text_start_point_title.bottom;
             anchors.topMargin: 5;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
             }
             inputText: canvas_quadratic.visible ? canvas_quadratic.control_point_y : canvas_cubic.control_point_1_y;
-            inputTextColor: "#00CD00";
+            inputTextColor: "#006400";
             inputFont.pixelSize: 20;
             inputFont.bold: true;
             hintText: "";
@@ -616,12 +634,12 @@ Window {
         /* 控制点2坐标 */
         Text {
             id: text_control_point_2_title;
-            anchors.right: input_end_point_x.left;
-            anchors.rightMargin: 30;
-            anchors.top: text_corner_left_bottom.bottom;
-            anchors.topMargin: 10;
-            text: qsTr("控制点2");
-            color: "#76EE00";
+            anchors.left: container.left;
+            anchors.leftMargin: text_start_point_title.anchors.leftMargin;
+            anchors.top: text_control_point_1_title.bottom;
+            anchors.topMargin: 5;
+            text: qsTr("控制点2:");
+            color: "#00868B";
             font.pixelSize: 20;
             font.bold: true;
             visible: canvas_quadratic.visible ? false : true;
@@ -629,15 +647,15 @@ Window {
 
         XTextInput {
             id: input_control_point_2_x;
-            anchors.right: input_end_point_x.left;
-            anchors.rightMargin: 30;
-            anchors.top: text_control_point_2_title.bottom;
+            anchors.left: text_control_point_2_title.left;
+            anchors.leftMargin: 90;
+            anchors.top: text_control_point_1_title.bottom;
             anchors.topMargin: 5;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
             }
             inputText: canvas_cubic.control_point_2_x;
-            inputTextColor: "#76EE00";
+            inputTextColor: "#00868B";
             inputFont.pixelSize: 20;
             inputFont.bold: true;
             hintText: "";
@@ -658,15 +676,15 @@ Window {
 
         XTextInput {
             id: input_control_point_2_y;
-            anchors.right: input_end_point_y.left;
-            anchors.rightMargin: 30;
-            anchors.top: input_control_point_2_x.bottom;
+            anchors.left: input_control_point_2_x.right;
+            anchors.leftMargin: 5;
+            anchors.top: text_control_point_1_title.bottom;
             anchors.topMargin: 5;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
             }
             inputText: canvas_cubic.control_point_2_y;
-            inputTextColor: "#76EE00";
+            inputTextColor: "#00868B";
             inputFont.pixelSize: 20;
             inputFont.bold: true;
             hintText: "";
@@ -688,10 +706,11 @@ Window {
         /* 终点坐标 */
         Text {
             id: text_end_point_title;
-            anchors.right: container.right;
-            anchors.top: text_corner_left_bottom.bottom;
-            anchors.topMargin: 10;
-            text: qsTr("终点");
+            anchors.left: container.left;
+            anchors.leftMargin: text_start_point_title.anchors.leftMargin;
+            anchors.top: canvas_quadratic.visible ? text_control_point_1_title.bottom : text_control_point_2_title.bottom;
+            anchors.topMargin: 5;
+            text: qsTr("终点:");
             color: "#0000FF";
             font.pixelSize: 20;
             font.bold: true;
@@ -699,8 +718,9 @@ Window {
 
         XTextInput {
             id: input_end_point_x;
-            anchors.right: container.right;
-            anchors.top: text_end_point_title.bottom;
+            anchors.left: text_end_point_title.left;
+            anchors.leftMargin: 90;
+            anchors.top: canvas_quadratic.visible ? text_control_point_1_title.bottom : text_control_point_2_title.bottom;
             anchors.topMargin: 5;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
@@ -730,8 +750,9 @@ Window {
 
         XTextInput {
             id: input_end_point_y;
-            anchors.right: container.right;
-            anchors.top: input_end_point_x.bottom;
+            anchors.left: input_end_point_x.right;
+            anchors.leftMargin: 5;
+            anchors.top: canvas_quadratic.visible ? text_control_point_1_title.bottom : text_control_point_2_title.bottom;
             anchors.topMargin: 5;
             inputValidator: RegExpValidator {   /* 数字 */
                 regExp: /^[0-9]{0,}$/;
