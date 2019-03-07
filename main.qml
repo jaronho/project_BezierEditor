@@ -2,11 +2,13 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 
 Window {
+    readonly property string version: "v1.0.0";
+    readonly property string author: "（作者：何展然）";
     id: win;
     visible: true;
     width: container.width + 10;
     height: container.height + (canvas_quadratic.visible ? 280 : 330);
-    title: canvas_quadratic.visible ? qsTr("二次贝塞尔曲线编辑器（作者：何展然）") : qsTr("三次贝塞尔曲线编辑器（作者：何展然）");
+    title: (canvas_quadratic.visible ? qsTr("二次贝塞尔曲线编辑器") : qsTr("三次贝塞尔曲线编辑器")) + " " + version + author;
 
     Item {
         anchors.fill: parent;
