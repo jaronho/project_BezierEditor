@@ -187,7 +187,11 @@ Window {
                         var endY = self.clamp(pt.end_y, 0, self.height) + self.margin;
                         /* 绘制曲线 */
                         self.drawCubicBezierCruve(ctx, startX, startY, control1X, control1Y, control2X, control2Y, endX, endY, self.curve_width, "#AAAAAA");
-                        if (pt.debug) {
+                        if (1 === pt.debug || 2 === pt.debug) {
+                            if (2 === pt.debug) {
+                                self.drawLine(ctx, startX, startY, control1X, control1Y, 1, "#FF0000");
+                                self.drawLine(ctx, endX, endY, control2X, control2Y, 1, "#FF0000");
+                            }
                             /* 绘制起点 */
                             self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
                             /* 绘制控制点1 */
@@ -231,7 +235,11 @@ Window {
                         var endY = self.clamp(pt.end_y, 0, self.height) + self.margin;
                         /* 绘制曲线 */
                         self.drawQuadraticBezierCruve(ctx, startX, startY, control1X, control1Y, endX, endY, self.curve_width, "#AAAAAA");
-                        if (pt.debug) {
+                        if (1 === pt.debug || 2 === pt.debug) {
+                            if (2 === pt.debug) {
+                                self.drawLine(ctx, startX, startY, control1X, control1Y, 1, "#FF0000");
+                                self.drawLine(ctx, endX, endY, control1X, control1Y, 1, "#FF0000");
+                            }
                             /* 绘制起点 */
                             self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
                             /* 绘制控制点 */
@@ -277,6 +285,15 @@ Window {
                     ctx.beginPath();
                     ctx.moveTo(startX, startY);
                     ctx.bezierCurveTo(control1X, control1Y, control2X, control2Y, endX, endY);
+                    ctx.lineWidth = width;
+                    ctx.strokeStyle = style;
+                    ctx.stroke();
+                }
+                /* 绘制直线 */
+                function drawLine(ctx, x1, y1, x2, y2, width, style) {
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
                     ctx.lineWidth = width;
                     ctx.strokeStyle = style;
                     ctx.stroke();
@@ -334,7 +351,7 @@ Window {
                     if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
                         for (var i = canvas_quadratic.list_curve.length - 1; i >= 0; --i) {
                             var pt1 = canvas_quadratic.list_curve[i];
-                            if (pt1.debug) {
+                            if (1 === pt1.debug || 2 === pt1.debug) {
                                 if (self.isPointInCircle(pt1.end_x, pt1.end_y, self.point_radius, mX, mY)) {  /* 点击了终点 */
                                     curve_index = i;
                                     point_type = 4;
@@ -353,7 +370,7 @@ Window {
                     } else {  /* 三次贝塞尔曲线 */
                         for (var j = canvas_cubic.list_curve.length - 1; j >= 0; --j) {
                             var pt2 = canvas_cubic.list_curve[j];
-                            if (pt2.debug) {
+                            if (1 === pt2.debug || 2 === pt2.debug) {
                                 if (self.isPointInCircle(pt2.end_x, pt2.end_y, self.point_radius, mX, mY)) {  /* 点击了终点 */
                                     curve_index = j;
                                     point_type = 4;
@@ -409,7 +426,7 @@ Window {
                     if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt1 = canvas_quadratic.list_curve[curve_index];
-                            if (pt1.debug) {
+                            if (1 === pt1.debug || 2 === pt1.debug) {
                                 if (1 === point_type) {
                                     pt1.start_x = mX;
                                     listmodel_curve.get(curve_index).start_x = mX;
@@ -426,7 +443,7 @@ Window {
                     } else {  /* 三次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt2 = canvas_cubic.list_curve[curve_index];
-                            if (pt2.debug) {
+                            if (1 === pt2.debug || 2 === pt2.debug) {
                                 if (1 === point_type) {
                                     pt2.start_x = mX;
                                     listmodel_curve.get(curve_index).start_x = mX;
@@ -461,7 +478,7 @@ Window {
                     if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt1 = canvas_quadratic.list_curve[curve_index];
-                            if (pt1.debug) {
+                            if (1 === pt1.debug || 2 === pt1.debug) {
                                 if (1 === point_type) {
                                     pt1.start_y = mY;
                                     listmodel_curve.get(curve_index).start_y = mY;
@@ -477,7 +494,7 @@ Window {
                     } else {  /* 三次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt2 = canvas_cubic.list_curve[curve_index];
-                            if (pt2.debug) {
+                            if (1 === pt2.debug || 2 === pt2.debug) {
                                 if (1 === point_type) {
                                     pt2.start_y = mY;
                                     listmodel_curve.get(curve_index).start_y = mY;
@@ -537,7 +554,7 @@ Window {
                         control_2_y: 0,
                         end_x: self.width,
                         end_y: 0,
-                        debug: true
+                        debug: 1
                     };
                     canvas_quadratic.list_curve.push(pt1);
                     listmodel_curve.append(pt1);
@@ -551,7 +568,7 @@ Window {
                         control_2_y: self.height/2 - 100,
                         end_x: self.width,
                         end_y: 0,
-                        debug: true
+                        debug: 1
                     };
                     canvas_cubic.list_curve.push(pt2);
                     listmodel_curve.append(pt2);
@@ -906,13 +923,19 @@ Window {
                     anchors.topMargin: 5;
                     anchors.right: parent.right;
                     anchors.rightMargin: 30;
-                    hint.text: debug ? "调试开" : "调试关";
+                    hint.text: 1 === debug ? "调试1" : (2 === debug ? "调试2" : "调试关");
                     hint.color: "#000000";
                     hint.font.pixelSize: 20;
                     width: 65;
                     height: 30;
                     onButtonClick: function() {
-                        debug = !debug;
+                        if (0 === debug) {
+                            debug = 1;
+                        } else if (1 === debug) {
+                            debug = 2;
+                        } else if (2 === debug) {
+                            debug = 0;
+                        }
                         if (canvas_quadratic.visible) {
                             canvas_quadratic.list_curve[index].debug = debug;
                         } else {
