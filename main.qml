@@ -2,10 +2,11 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 
 Window {
+    id: win;
     visible: true;
     width: container.width + 10;
     height: container.height + (canvas_quadratic.visible ? 280 : 330);
-    title: canvas_quadratic.visible ? qsTr("二次贝塞尔曲线编辑器") : qsTr("三次贝塞尔曲线编辑器");
+    title: canvas_quadratic.visible ? qsTr("二次贝塞尔曲线编辑器（作者：何展然）") : qsTr("三次贝塞尔曲线编辑器（作者：何展然）");
 
     Item {
         anchors.fill: parent;
@@ -108,6 +109,11 @@ Window {
             onButtonClick: function() {
                 listmodel_curve.clear();
                 canvas_quadratic.visible = !canvas_quadratic.visible;
+                win.setMinimumWidth(container.width + 10);
+                win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+                win.setMaximumWidth(container.width + 10);
+                win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+                win.setHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
                 if (canvas_quadratic.visible) {
                     for (var i = 0; i < canvas_quadratic.list_curve.length; ++i) {
                         listmodel_curve.append(canvas_quadratic.list_curve[i]);
@@ -179,14 +185,16 @@ Window {
                         var endY = self.clamp(pt.end_y, 0, self.height) + self.margin;
                         /* 绘制曲线 */
                         self.drawCubicBezierCruve(ctx, startX, startY, control1X, control1Y, control2X, control2Y, endX, endY, self.curve_width, "#AAAAAA");
-                        /* 绘制起点 */
-                        self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
-                        /* 绘制控制点1 */
-                        self.drawCircle(ctx, control1X, control1Y, self.point_radius, "#006400");
-                        /* 绘制控制点2 */
-                        self.drawCircle(ctx, control2X, control2Y, self.point_radius, "#00868B");
-                        /* 绘制终点 */
-                        self.drawCircle(ctx, endX, endY, self.point_radius, "#0000FF");
+                        if (pt.debug) {
+                            /* 绘制起点 */
+                            self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
+                            /* 绘制控制点1 */
+                            self.drawCircle(ctx, control1X, control1Y, self.point_radius, "#006400");
+                            /* 绘制控制点2 */
+                            self.drawCircle(ctx, control2X, control2Y, self.point_radius, "#00868B");
+                            /* 绘制终点 */
+                            self.drawCircle(ctx, endX, endY, self.point_radius, "#0000FF");
+                        }
                     }
                 }
             }
@@ -221,12 +229,14 @@ Window {
                         var endY = self.clamp(pt.end_y, 0, self.height) + self.margin;
                         /* 绘制曲线 */
                         self.drawQuadraticBezierCruve(ctx, startX, startY, control1X, control1Y, endX, endY, self.curve_width, "#AAAAAA");
-                        /* 绘制起点 */
-                        self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
-                        /* 绘制控制点 */
-                        self.drawCircle(ctx, control1X, control1Y, self.point_radius, "#006400");
-                        /* 绘制终点 */
-                        self.drawCircle(ctx, endX, endY, self.point_radius, "#0000FF");
+                        if (pt.debug) {
+                            /* 绘制起点 */
+                            self.drawCircle(ctx, startX, startY, self.point_radius, "#FF0000");
+                            /* 绘制控制点 */
+                            self.drawCircle(ctx, control1X, control1Y, self.point_radius, "#006400");
+                            /* 绘制终点 */
+                            self.drawCircle(ctx, endX, endY, self.point_radius, "#0000FF");
+                        }
                     }
                 }
             }
@@ -322,39 +332,43 @@ Window {
                     if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
                         for (var i = canvas_quadratic.list_curve.length - 1; i >= 0; --i) {
                             var pt1 = canvas_quadratic.list_curve[i];
-                            if (self.isPointInCircle(pt1.end_x, pt1.end_y, self.point_radius, mX, mY)) {  /* 点击了终点 */
-                                curve_index = i;
-                                point_type = 4;
-                                break;
-                            } else if (self.isPointInCircle(pt1.control_1_x, pt1.control_1_y, self.point_radius, mX, mY)) {  /* 点击了控制点 */
-                                curve_index = i;
-                                point_type = 2;
-                                break;
-                            } else if (self.isPointInCircle(pt1.start_x, pt1.start_y, self.point_radius, mX, mY)) {  /* 点击了起点 */
-                                curve_index = i;
-                                point_type = 1;
-                                break;
+                            if (pt1.debug) {
+                                if (self.isPointInCircle(pt1.end_x, pt1.end_y, self.point_radius, mX, mY)) {  /* 点击了终点 */
+                                    curve_index = i;
+                                    point_type = 4;
+                                    break;
+                                } else if (self.isPointInCircle(pt1.control_1_x, pt1.control_1_y, self.point_radius, mX, mY)) {  /* 点击了控制点 */
+                                    curve_index = i;
+                                    point_type = 2;
+                                    break;
+                                } else if (self.isPointInCircle(pt1.start_x, pt1.start_y, self.point_radius, mX, mY)) {  /* 点击了起点 */
+                                    curve_index = i;
+                                    point_type = 1;
+                                    break;
+                                }
                             }
                         }
                     } else {  /* 三次贝塞尔曲线 */
                         for (var j = canvas_cubic.list_curve.length - 1; j >= 0; --j) {
                             var pt2 = canvas_cubic.list_curve[j];
-                            if (self.isPointInCircle(pt2.end_x, pt2.end_y, self.point_radius, mX, mY)) {  /* 点击了终点 */
-                                curve_index = j;
-                                point_type = 4;
-                                break;
-                            } else if (self.isPointInCircle(pt2.control_2_x, pt2.control_2_y, self.point_radius, mX, mY)) {  /* 点击了控制点2 */
-                                curve_index = j;
-                                point_type = 3;
-                                break;
-                            } else if (self.isPointInCircle(pt2.control_1_x, pt2.control_1_y, self.point_radius, mX, mY)) {  /* 点击了控制点1 */
-                                curve_index = j;
-                                point_type = 2;
-                                break;
-                            } else if (self.isPointInCircle(pt2.start_x, pt2.start_y, self.point_radius, mX, mY)) {  /* 点击了起点 */
-                                curve_index = j;
-                                point_type = 1;
-                                break;
+                            if (pt2.debug) {
+                                if (self.isPointInCircle(pt2.end_x, pt2.end_y, self.point_radius, mX, mY)) {  /* 点击了终点 */
+                                    curve_index = j;
+                                    point_type = 4;
+                                    break;
+                                } else if (self.isPointInCircle(pt2.control_2_x, pt2.control_2_y, self.point_radius, mX, mY)) {  /* 点击了控制点2 */
+                                    curve_index = j;
+                                    point_type = 3;
+                                    break;
+                                } else if (self.isPointInCircle(pt2.control_1_x, pt2.control_1_y, self.point_radius, mX, mY)) {  /* 点击了控制点1 */
+                                    curve_index = j;
+                                    point_type = 2;
+                                    break;
+                                } else if (self.isPointInCircle(pt2.start_x, pt2.start_y, self.point_radius, mX, mY)) {  /* 点击了起点 */
+                                    curve_index = j;
+                                    point_type = 1;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -393,33 +407,37 @@ Window {
                     if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt1 = canvas_quadratic.list_curve[curve_index];
-                            if (1 === point_type) {
-                                pt1.start_x = mX;
-                                listmodel_curve.get(curve_index).start_x = mX;
-                            } else if (2 === point_type) {
-                                pt1.control_1_x = mX;
-                                listmodel_curve.get(curve_index).control_1_x = mX;
-                            } else if (4 === point_type) {
-                                pt1.end_x = mX;
-                                listmodel_curve.get(curve_index).end_x = mX;
+                            if (pt1.debug) {
+                                if (1 === point_type) {
+                                    pt1.start_x = mX;
+                                    listmodel_curve.get(curve_index).start_x = mX;
+                                } else if (2 === point_type) {
+                                    pt1.control_1_x = mX;
+                                    listmodel_curve.get(curve_index).control_1_x = mX;
+                                } else if (4 === point_type) {
+                                    pt1.end_x = mX;
+                                    listmodel_curve.get(curve_index).end_x = mX;
+                                }
                             }
                         }
 
                     } else {  /* 三次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt2 = canvas_cubic.list_curve[curve_index];
-                            if (1 === point_type) {
-                                pt2.start_x = mX;
-                                listmodel_curve.get(curve_index).start_x = mX;
-                            } else if (2 === point_type) {
-                                pt2.control_1_x = mX;
-                                listmodel_curve.get(curve_index).control_1_x = mX;
-                            } else if (3 === point_type) {
-                                pt2.control_2_x = mX;
-                                listmodel_curve.get(curve_index).control_2_x = mX;
-                            } else if (4 === point_type) {
-                                pt2.end_x = mX;
-                                listmodel_curve.get(curve_index).end_x = mX;
+                            if (pt2.debug) {
+                                if (1 === point_type) {
+                                    pt2.start_x = mX;
+                                    listmodel_curve.get(curve_index).start_x = mX;
+                                } else if (2 === point_type) {
+                                    pt2.control_1_x = mX;
+                                    listmodel_curve.get(curve_index).control_1_x = mX;
+                                } else if (3 === point_type) {
+                                    pt2.control_2_x = mX;
+                                    listmodel_curve.get(curve_index).control_2_x = mX;
+                                } else if (4 === point_type) {
+                                    pt2.end_x = mX;
+                                    listmodel_curve.get(curve_index).end_x = mX;
+                                }
                             }
                         }
                     }
@@ -441,32 +459,36 @@ Window {
                     if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt1 = canvas_quadratic.list_curve[curve_index];
-                            if (1 === point_type) {
-                                pt1.start_y = mY;
-                                listmodel_curve.get(curve_index).start_y = mY;
-                            } else if (2 === point_type) {
-                                pt1.control_1_y = mY;
-                                listmodel_curve.get(curve_index).control_1_y = mY;
-                            } else if (4 === point_type) {
-                                pt1.end_y = mY;
-                                listmodel_curve.get(curve_index).end_y = mY;
+                            if (pt1.debug) {
+                                if (1 === point_type) {
+                                    pt1.start_y = mY;
+                                    listmodel_curve.get(curve_index).start_y = mY;
+                                } else if (2 === point_type) {
+                                    pt1.control_1_y = mY;
+                                    listmodel_curve.get(curve_index).control_1_y = mY;
+                                } else if (4 === point_type) {
+                                    pt1.end_y = mY;
+                                    listmodel_curve.get(curve_index).end_y = mY;
+                                }
                             }
                         }
                     } else {  /* 三次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt2 = canvas_cubic.list_curve[curve_index];
-                            if (1 === point_type) {
-                                pt2.start_y = mY;
-                                listmodel_curve.get(curve_index).start_y = mY;
-                            } else if (2 === point_type) {
-                                pt2.control_1_y = mY;
-                                listmodel_curve.get(curve_index).control_1_y = mY;
-                            } else if (3 === point_type) {
-                                pt2.control_2_y = mY;
-                                listmodel_curve.get(curve_index).control_2_y = mY;
-                            } else if (4 === point_type) {
-                                pt2.end_y = mY;
-                                listmodel_curve.get(curve_index).end_y = mY;
+                            if (pt2.debug) {
+                                if (1 === point_type) {
+                                    pt2.start_y = mY;
+                                    listmodel_curve.get(curve_index).start_y = mY;
+                                } else if (2 === point_type) {
+                                    pt2.control_1_y = mY;
+                                    listmodel_curve.get(curve_index).control_1_y = mY;
+                                } else if (3 === point_type) {
+                                    pt2.control_2_y = mY;
+                                    listmodel_curve.get(curve_index).control_2_y = mY;
+                                } else if (4 === point_type) {
+                                    pt2.end_y = mY;
+                                    listmodel_curve.get(curve_index).end_y = mY;
+                                }
                             }
                         }
                     }
@@ -512,7 +534,8 @@ Window {
                         control_2_x: 0,
                         control_2_y: 0,
                         end_x: self.width,
-                        end_y: 0
+                        end_y: 0,
+                        debug: true
                     };
                     canvas_quadratic.list_curve.push(pt1);
                     listmodel_curve.append(pt1);
@@ -525,7 +548,8 @@ Window {
                         control_2_x: self.width/2 + 100,
                         control_2_y: self.height/2 - 100,
                         end_x: self.width,
-                        end_y: 0
+                        end_y: 0,
+                        debug: true
                     };
                     canvas_cubic.list_curve.push(pt2);
                     listmodel_curve.append(pt2);
@@ -876,7 +900,28 @@ Window {
                 }
 
                 XButton {
-                    anchors.verticalCenter: parent.verticalCenter;
+                    anchors.top: parent.top;
+                    anchors.topMargin: 5;
+                    anchors.right: parent.right;
+                    anchors.rightMargin: 30;
+                    hint.text: debug ? "调试开" : "调试关";
+                    hint.color: "#000000";
+                    hint.font.pixelSize: 20;
+                    width: 65;
+                    height: 30;
+                    onButtonClick: function() {
+                        debug = !debug;
+                        if (canvas_quadratic.visible) {
+                            canvas_quadratic.list_curve[index].debug = debug;
+                        } else {
+                            canvas_cubic.list_curve[index].debug = debug;
+                        }
+                    }
+                }
+
+                XButton {
+                    anchors.bottom: parent.bottom;
+                    anchors.bottomMargin: 10;
                     anchors.right: parent.right;
                     anchors.rightMargin: 30;
                     hint.text: "删除";
@@ -904,6 +949,11 @@ Window {
         }
 
         Component.onCompleted: {
+            win.setMinimumWidth(container.width + 10);
+            win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+            win.setMaximumWidth(container.width + 10);
+            win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+            win.setHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
             if (canvas_quadratic.visible) {
                 listmodel_curve.clear();
                 for (var i = 0; i < canvas_quadratic.list_curve.length; ++i) {
