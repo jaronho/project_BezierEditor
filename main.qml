@@ -45,7 +45,7 @@ Window {
                 inputFont.pixelSize: 20;
                 hintText: "";
                 width: 80;
-                onInputEditingFinished: function() {
+                onInputAccepted: function() {
                     var width = 0;
                     if (inputText.length > 0) {
                         width = parseInt(inputText);
@@ -82,7 +82,7 @@ Window {
                 inputFont.pixelSize: 20;
                 hintText: "";
                 width: 80;
-                onInputEditingFinished: function() {
+                onInputAccepted: function() {
                     var height = 0;
                     if (inputText.length > 0) {
                         height = parseInt(inputText);
@@ -626,7 +626,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -658,7 +658,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
@@ -703,7 +703,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -735,7 +735,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
@@ -782,7 +782,7 @@ Window {
                     hintText: "";
                     width: 80;
                     visible: canvas_quadratic.visible ? false : true;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -811,7 +811,7 @@ Window {
                     hintText: "";
                     width: 80;
                     visible: canvas_quadratic.visible ? false : true;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
@@ -852,7 +852,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -884,7 +884,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputTextEdited: function() {
+                    onInputAccepted: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
