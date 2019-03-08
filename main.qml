@@ -302,7 +302,6 @@ Window {
                 function drawCircle(ctx, x, y, radius, style) {
                     ctx.beginPath();
                     ctx.arc(x, y, radius, 0, 360, true);
-                    ctx.closePath();
                     ctx.fillStyle = style;
                     ctx.fill();
                 }
@@ -643,7 +642,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -651,11 +650,20 @@ Window {
                         if (x > self.width) {
                             x = self.width;
                         }
+                        start_x = x;
                         inputText = x.toString();
                         if (canvas_quadratic.visible) {
                             canvas_quadratic.list_curve[index].start_x = x;
                         } else {
                             canvas_cubic.list_curve[index].start_x = x;
+                        }
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_start_x.inputText = start_x;
                         }
                     }
                 }
@@ -675,7 +683,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
@@ -683,11 +691,20 @@ Window {
                         if (y > self.height) {
                             y = self.height;
                         }
+                        start_y = y;
                         inputText = y.toString();
                         if (canvas_quadratic.visible) {
                             canvas_quadratic.list_curve[index].start_y = y;
                         } else {
                             canvas_cubic.list_curve[index].start_y = y;
+                        }
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_start_y.inputText = start_y;
                         }
                     }
                 }
@@ -720,7 +737,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -728,11 +745,20 @@ Window {
                         if (x > self.width) {
                             x = self.width;
                         }
+                        control_1_x = x;
                         inputText = x.toString();
                         if (canvas_quadratic.visible) {
                             canvas_quadratic.list_curve[index].control_1_x = x;
                         } else {
                             canvas_cubic.list_curve[index].control_1_x = x;
+                        }
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_control_1_x.inputText = control_1_x;
                         }
                     }
                 }
@@ -752,7 +778,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
@@ -760,11 +786,20 @@ Window {
                         if (y > self.height) {
                             y = self.height;
                         }
+                        control_1_y = y;
                         inputText = y.toString();
                         if (canvas_quadratic.visible) {
                             canvas_quadratic.list_curve[index].control_1_y = y;
                         } else {
                             canvas_cubic.list_curve[index].control_1_y = y;
+                        }
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_control_1_y.inputText = control_1_y;
                         }
                     }
                 }
@@ -799,7 +834,7 @@ Window {
                     hintText: "";
                     width: 80;
                     visible: canvas_quadratic.visible ? false : true;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -807,8 +842,17 @@ Window {
                         if (x > self.width) {
                             x = self.width;
                         }
+                        control_2_x = x;
                         inputText = x.toString();
                         canvas_cubic.control_2_x = x;
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_control_2_x.inputText = control_2_x;
+                        }
                     }
                 }
 
@@ -828,7 +872,7 @@ Window {
                     hintText: "";
                     width: 80;
                     visible: canvas_quadratic.visible ? false : true;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
@@ -836,8 +880,17 @@ Window {
                         if (y > self.height) {
                             y = self.height;
                         }
+                        control_2_y = y;
                         inputText = y.toString();
                         canvas_cubic.control_2_y = y;
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_control_2_y.inputText = control_2_y;
+                        }
                     }
                 }
 
@@ -869,7 +922,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
@@ -877,11 +930,20 @@ Window {
                         if (x > self.width) {
                             x = self.width;
                         }
+                        end_x = x;
                         inputText = x.toString();
                         if (canvas_quadratic.visible) {
                             canvas_quadratic.list_curve[index].end_x = x;
                         } else {
                             canvas_cubic.list_curve[index].end_x = x;
+                        }
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_end_x.inputText = end_x;
                         }
                     }
                 }
@@ -901,7 +963,7 @@ Window {
                     inputFont.bold: true;
                     hintText: "";
                     width: 80;
-                    onInputAccepted: function() {
+                    onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
@@ -909,11 +971,20 @@ Window {
                         if (y > self.height) {
                             y = self.height;
                         }
+                        end_y = y;
                         inputText = y.toString();
                         if (canvas_quadratic.visible) {
                             canvas_quadratic.list_curve[index].end_y = y;
                         } else {
                             canvas_cubic.list_curve[index].end_y = y;
+                        }
+                    }
+                    Timer {
+                        interval: 100;
+                        repeat: true;
+                        running: true;
+                        onTriggered: {
+                            input_end_y.inputText = end_y;
                         }
                     }
                 }
