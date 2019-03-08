@@ -844,7 +844,7 @@ Window {
                         }
                         control_2_x = x;
                         inputText = x.toString();
-                        canvas_cubic.control_2_x = x;
+                        canvas_cubic.list_curve[index].control_2_x = x;
                     }
                     Timer {
                         interval: 100;
@@ -882,7 +882,7 @@ Window {
                         }
                         control_2_y = y;
                         inputText = y.toString();
-                        canvas_cubic.control_2_y = y;
+                        canvas_cubic.list_curve[index].control_2_y = y;
                     }
                     Timer {
                         interval: 100;
