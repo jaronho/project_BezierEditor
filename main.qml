@@ -26,6 +26,7 @@ Window {
             /* 画布宽 */
             Text {
                 id: text_canvas_width_title;
+                anchors.verticalCenter: input_canvas_width.verticalCenter;
                 anchors.left: parent.left;
                 anchors.leftMargin: 40;
                 text: qsTr("画布宽:");
@@ -64,6 +65,7 @@ Window {
             /* 画布高 */
             Text {
                 id: text_canvas_height_title;
+                anchors.verticalCenter: input_canvas_height.verticalCenter;
                 anchors.right: input_canvas_height.left;
                 anchors.rightMargin: 5;
                 text: qsTr("画布高:");
@@ -590,7 +592,7 @@ Window {
         ListView {
             id: listview_curve;
             width: self.width;
-            height: canvas_quadratic.visible ? 208 : 274;
+            height: canvas_quadratic.visible ? 213 : 279;
             anchors.horizontalCenter: parent.horizontalCenter;
             anchors.top: button_add.bottom;
             anchors.topMargin: 10;
@@ -600,7 +602,7 @@ Window {
             clip: true;
             delegate: Item {
                 width: listview_curve.width;
-                height: canvas_quadratic.visible ? 104 : 137;
+                height: canvas_quadratic.visible ? 109 : 142;
 
                 Rectangle {
                     anchors.fill: parent;
@@ -609,9 +611,9 @@ Window {
 
                 Text {
                     anchors.left: parent.left;
-                    anchors.leftMargin: 30;
+                    anchors.leftMargin: 20;
                     anchors.verticalCenter: parent.verticalCenter;
-                    text: "第" + (index + 1) + "条";
+                    text: "编号_" + (index + 1);
                     color: "#000000";
                     font.pixelSize: 20;
                 }
@@ -619,10 +621,9 @@ Window {
                 /* 起点坐标 */
                 Text {
                     id: text_start_title;
+                    anchors.verticalCenter: input_start_x.verticalCenter;
                     anchors.left: parent.left;
                     anchors.leftMargin: (parent.width - (input_start_y.x + input_start_y.width - text_start_title.x)) / 2;
-                    anchors.top: parent.top;
-                    anchors.topMargin: 5;
                     text: qsTr("起点:");
                     color: "#FF0000";
                     font.pixelSize: 20;
@@ -633,7 +634,7 @@ Window {
                     anchors.left: text_start_title.left;
                     anchors.leftMargin: 90;
                     anchors.top: parent.top;
-                    anchors.topMargin: text_start_title.anchors.topMargin;
+                    anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
                     }
@@ -674,7 +675,7 @@ Window {
                     anchors.left: input_start_x.right;
                     anchors.leftMargin: 5;
                     anchors.top: parent.top;
-                    anchors.topMargin: text_start_title.anchors.topMargin;
+                    anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
                     }
@@ -713,10 +714,9 @@ Window {
                 /* 控制点1坐标 */
                 Text {
                     id: text_control_1_title
+                    anchors.verticalCenter: input_control_1_x.verticalCenter;
                     anchors.left: parent.left;
                     anchors.leftMargin: text_start_title.anchors.leftMargin;
-                    anchors.top: text_start_title.bottom;
-                    anchors.topMargin: 5;
                     text: canvas_quadratic.visible ? qsTr("控制点:") : qsTr("控制点1:");
                     color: "#006400";
                     font.pixelSize: 20;
@@ -726,8 +726,8 @@ Window {
                     id: input_control_1_x;
                     anchors.left: text_control_1_title.left;
                     anchors.leftMargin: input_start_x.anchors.leftMargin;
-                    anchors.top: text_start_title.bottom;
-                    anchors.topMargin: text_control_1_title.anchors.topMargin;
+                    anchors.top: input_start_x.bottom;
+                    anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
                     }
@@ -767,8 +767,8 @@ Window {
                     id: input_control_1_y;
                     anchors.left: input_control_1_x.right;
                     anchors.leftMargin: input_start_y.anchors.leftMargin;
-                    anchors.top: text_start_title.bottom;
-                    anchors.topMargin: text_control_1_title.anchors.topMargin;
+                    anchors.top: input_start_x.bottom;
+                    anchors.topMargin: input_control_1_x.anchors.topMargin;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
                     }
@@ -807,10 +807,9 @@ Window {
                 /* 控制点2坐标 */
                 Text {
                     id: text_control_2_title;
+                    anchors.verticalCenter: input_control_2_x.verticalCenter;
                     anchors.left: parent.left;
                     anchors.leftMargin: text_start_title.anchors.leftMargin;
-                    anchors.top: text_control_1_title.bottom;
-                    anchors.topMargin: text_control_1_title.anchors.topMargin;
                     text: qsTr("控制点2:");
                     color: "#00868B";
                     font.pixelSize: 20;
@@ -821,8 +820,8 @@ Window {
                     id: input_control_2_x;
                     anchors.left: text_control_2_title.left;
                     anchors.leftMargin: input_start_x.anchors.leftMargin;
-                    anchors.top: text_control_1_title.bottom;
-                    anchors.topMargin: text_control_2_title.anchors.topMargin;
+                    anchors.top: input_control_1_x.bottom;
+                    anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
                     }
@@ -859,8 +858,8 @@ Window {
                     id: input_control_2_y;
                     anchors.left: input_control_2_x.right;
                     anchors.leftMargin: input_control_1_y.anchors.leftMargin;
-                    anchors.top: text_control_1_title.bottom;
-                    anchors.topMargin: text_control_2_title.anchors.topMargin;
+                    anchors.top: input_control_1_x.bottom;
+                    anchors.topMargin: input_control_2_x.anchors.topMargin;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
                     }
@@ -896,10 +895,9 @@ Window {
                 /* 终点坐标 */
                 Text {
                     id: text_end_title;
+                    anchors.verticalCenter: input_end_x.verticalCenter;
                     anchors.left: parent.left;
                     anchors.leftMargin: text_start_title.anchors.leftMargin;
-                    anchors.top: canvas_quadratic.visible ? text_control_1_title.bottom : text_control_2_title.bottom;
-                    anchors.topMargin: text_control_1_title.anchors.topMargin;
                     text: qsTr("终点:");
                     color: "#0000FF";
                     font.pixelSize: 20;
@@ -909,8 +907,8 @@ Window {
                     id: input_end_x;
                     anchors.left: text_end_title.left;
                     anchors.leftMargin: input_start_x.anchors.leftMargin;
-                    anchors.top: canvas_quadratic.visible ? text_control_1_title.bottom : text_control_2_title.bottom;
-                    anchors.topMargin: text_end_title.anchors.topMargin;
+                    anchors.top: canvas_quadratic.visible ? input_control_1_x.bottom : input_control_2_x.bottom;
+                    anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
                     }
@@ -950,7 +948,7 @@ Window {
                     id: input_end_y;
                     anchors.left: input_end_x.right;
                     anchors.leftMargin: input_start_y.anchors.leftMargin;
-                    anchors.top: canvas_quadratic.visible ? text_control_1_title.bottom : text_control_2_title.bottom;
+                    anchors.top: canvas_quadratic.visible ? input_control_1_x.bottom : input_control_2_x.bottom;
                     anchors.topMargin: input_end_x.anchors.topMargin;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
