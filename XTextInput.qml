@@ -95,7 +95,7 @@ Item {
         font.pixelSize: height * 0.55;
         onFocusChanged: {   /* 当聚焦改变时 */
             if ('function' === typeof(onInputFocusChanged)) {
-                onInputFocusChanged(focus);
+                onInputFocusChanged();
             }
         }
         onTextEdited: { /* 当文本被编辑后触发 */
