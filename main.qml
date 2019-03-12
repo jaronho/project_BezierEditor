@@ -7,8 +7,8 @@ Window {
     id: win;
     visible: true;
     width: container.width + 10;
-    height: container.height + (canvas_quadratic.visible ? 340 : 405);
-    title: (canvas_quadratic.visible ? qsTr("二次贝塞尔曲线编辑器") : qsTr("三次贝塞尔曲线编辑器")) + " " + version + author;
+    height: container.height + (self.modeQuadratic ? 345 : 410);
+    title: (self.modeQuadratic ? qsTr("二次贝塞尔曲线编辑器") : qsTr("三次贝塞尔曲线编辑器")) + " " + version + author;
 
     Item {
         anchors.fill: parent;
@@ -110,17 +110,17 @@ Window {
             anchors.topMargin: 10;
             width: 210;
             height: 30;
-            hint.text: canvas_quadratic.visible ? qsTr("切换为三次贝塞尔曲线") : qsTr("切换为二次贝塞尔曲线");
+            hint.text: self.modeQuadratic ? qsTr("切换为三次贝塞尔曲线") : qsTr("切换为二次贝塞尔曲线");
             hint.font.pixelSize: 20;
             onButtonClick: function() {
                 listmodel_curve.clear();
-                canvas_quadratic.visible = !canvas_quadratic.visible;
+                self.modeQuadratic = !self.modeQuadratic;
                 win.setMinimumWidth(container.width + 10);
-                win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
+                win.setMinimumHeight(container.height + (self.modeQuadratic ? 345 : 410));
                 win.setMaximumWidth(container.width + 10);
-                win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
-                win.setHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
-                if (canvas_quadratic.visible) {
+                win.setMaximumHeight(container.height + (self.modeQuadratic ? 345 : 410));
+                win.setHeight(container.height + (self.modeQuadratic ? 345 : 410));
+                if (self.modeQuadratic) {
                     for (var i = 0; i < canvas_quadratic.list_curve.length; ++i) {
                         listmodel_curve.append(canvas_quadratic.list_curve[i]);
                     }
@@ -165,7 +165,7 @@ Window {
                 id: canvas_cubic;
                 anchors.fill: parent;
                 renderStrategy: Canvas.Threaded;
-                visible: !canvas_quadratic.visible;
+                visible: !self.modeQuadratic;
                 onPaint: {
                     draw();
                 }
@@ -215,7 +215,7 @@ Window {
                 id: canvas_quadratic;
                 anchors.fill: parent;
                 renderStrategy: Canvas.Threaded;
-                visible: !canvas_cubic.visible;
+                visible: self.modeQuadratic;
                 onPaint: {
                     draw();
                 }
@@ -275,6 +275,7 @@ Window {
                 property int width: 480;
                 property int height: 240;
                 property int margin: 10;
+                property bool modeQuadratic: true;      /* 是否二次贝塞尔模式 */
                 /* 绘制二次贝塞尔曲线 */
                 function drawQuadraticBezierCruve(ctx, startX, startY, controlX, controlY, endX, endY, width, style) {
                     ctx.beginPath();
@@ -351,7 +352,7 @@ Window {
                     //console.log("on pressed: (" + mX + ", " + mY + ")");
                     curve_index = -1;
                     point_type = 0;
-                    if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
+                    if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                         for (var i = canvas_quadratic.list_curve.length - 1; i >= 0; --i) {
                             var pt1 = canvas_quadratic.list_curve[i];
                             if (1 === pt1.debug || 2 === pt1.debug) {
@@ -426,7 +427,7 @@ Window {
                         mY = self.height;
                     }
                     //console.log("on x changed: (" + mX + ", " + mY + ")");
-                    if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
+                    if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt1 = canvas_quadratic.list_curve[curve_index];
                             if (1 === pt1.debug || 2 === pt1.debug) {
@@ -478,7 +479,7 @@ Window {
                         mY = self.height;
                     }
                     //console.log("on y changed: (" + mX + ", " + mY + ")");
-                    if (canvas_quadratic.visible) { /* 二次贝塞尔曲线 */
+                    if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                         if (curve_index >= 0) {
                             var pt1 = canvas_quadratic.list_curve[curve_index];
                             if (1 === pt1.debug || 2 === pt1.debug) {
@@ -547,7 +548,7 @@ Window {
             width: 90;
             height: 30;
             onButtonClick: function() {
-                if (canvas_quadratic.visible) {
+                if (self.modeQuadratic) {
                     var pt1 = {
                         start_x: 0,
                         start_y: self.height,
@@ -592,7 +593,7 @@ Window {
         ListView {
             id: listview_curve;
             width: self.width;
-            height: canvas_quadratic.visible ? 213 : 279;
+            height: self.modeQuadratic ? 213 : 279;
             anchors.horizontalCenter: parent.horizontalCenter;
             anchors.top: button_add.bottom;
             anchors.topMargin: 10;
@@ -602,7 +603,7 @@ Window {
             clip: true;
             delegate: Item {
                 width: listview_curve.width;
-                height: canvas_quadratic.visible ? 109 : 142;
+                height: self.modeQuadratic ? 109 : 142;
 
                 Rectangle {
                     anchors.fill: parent;
@@ -654,7 +655,7 @@ Window {
                         }
                         start_x = x;
                         inputText = x.toString();
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve[index].start_x = x;
                         } else {
                             canvas_cubic.list_curve[index].start_x = x;
@@ -695,7 +696,7 @@ Window {
                         }
                         start_y = y;
                         inputText = y.toString();
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve[index].start_y = y;
                         } else {
                             canvas_cubic.list_curve[index].start_y = y;
@@ -717,7 +718,7 @@ Window {
                     anchors.verticalCenter: input_control_1_x.verticalCenter;
                     anchors.left: parent.left;
                     anchors.leftMargin: text_start_title.anchors.leftMargin;
-                    text: canvas_quadratic.visible ? qsTr("控制点:") : qsTr("控制点1:");
+                    text: self.modeQuadratic ? qsTr("控制点:") : qsTr("控制点1:");
                     color: "#006400";
                     font.pixelSize: 20;
                 }
@@ -747,7 +748,7 @@ Window {
                         }
                         control_1_x = x;
                         inputText = x.toString();
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve[index].control_1_x = x;
                         } else {
                             canvas_cubic.list_curve[index].control_1_x = x;
@@ -788,7 +789,7 @@ Window {
                         }
                         control_1_y = y;
                         inputText = y.toString();
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve[index].control_1_y = y;
                         } else {
                             canvas_cubic.list_curve[index].control_1_y = y;
@@ -813,7 +814,7 @@ Window {
                     text: qsTr("控制点2:");
                     color: "#00868B";
                     font.pixelSize: 20;
-                    visible: canvas_quadratic.visible ? false : true;
+                    visible: self.modeQuadratic ? false : true;
                 }
 
                 XTextInput {
@@ -831,7 +832,7 @@ Window {
                     hintText: "";
                     width: 80;
                     height: 28;
-                    visible: canvas_quadratic.visible ? false : true;
+                    visible: self.modeQuadratic ? false : true;
                     onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
@@ -869,7 +870,7 @@ Window {
                     hintText: "";
                     width: 80;
                     height: 28;
-                    visible: canvas_quadratic.visible ? false : true;
+                    visible: self.modeQuadratic ? false : true;
                     onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
@@ -907,7 +908,7 @@ Window {
                     id: input_end_x;
                     anchors.left: text_end_title.left;
                     anchors.leftMargin: input_start_x.anchors.leftMargin;
-                    anchors.top: canvas_quadratic.visible ? input_control_1_x.bottom : input_control_2_x.bottom;
+                    anchors.top: self.modeQuadratic ? input_control_1_x.bottom : input_control_2_x.bottom;
                     anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
@@ -928,7 +929,7 @@ Window {
                         }
                         end_x = x;
                         inputText = x.toString();
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve[index].end_x = x;
                         } else {
                             canvas_cubic.list_curve[index].end_x = x;
@@ -948,7 +949,7 @@ Window {
                     id: input_end_y;
                     anchors.left: input_end_x.right;
                     anchors.leftMargin: input_start_y.anchors.leftMargin;
-                    anchors.top: canvas_quadratic.visible ? input_control_1_x.bottom : input_control_2_x.bottom;
+                    anchors.top: self.modeQuadratic ? input_control_1_x.bottom : input_control_2_x.bottom;
                     anchors.topMargin: input_end_x.anchors.topMargin;
                     inputValidator: RegExpValidator {   /* 数字 */
                         regExp: /^[0-9]{0,}$/;
@@ -969,7 +970,7 @@ Window {
                         }
                         end_y = y;
                         inputText = y.toString();
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve[index].end_y = y;
                         } else {
                             canvas_cubic.list_curve[index].end_y = y;
@@ -1003,7 +1004,7 @@ Window {
                         } else if (2 === debug) {
                             debug = 0;
                         }
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve[index].debug = debug;
                         } else {
                             canvas_cubic.list_curve[index].debug = debug;
@@ -1022,7 +1023,7 @@ Window {
                     width: 50;
                     height: 30;
                     onButtonClick: function() {
-                        if (canvas_quadratic.visible) {
+                        if (self.modeQuadratic) {
                             canvas_quadratic.list_curve.splice(index, 1);
                         } else {
                             canvas_cubic.list_curve.splice(index, 1);
@@ -1042,11 +1043,11 @@ Window {
 
         Component.onCompleted: {
             win.setMinimumWidth(container.width + 10);
-            win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
+            win.setMinimumHeight(container.height + (self.modeQuadratic ? 345 : 410));
             win.setMaximumWidth(container.width + 10);
-            win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
-            win.setHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
-            if (canvas_quadratic.visible) {
+            win.setMaximumHeight(container.height + (self.modeQuadratic ? 345 : 410));
+            win.setHeight(container.height + (self.modeQuadratic ? 345 : 410));
+            if (self.modeQuadratic) {
                 listmodel_curve.clear();
                 for (var i = 0; i < canvas_quadratic.list_curve.length; ++i) {
                     listmodel_curve.append(canvas_quadratic.list_curve[i]);
