@@ -7,7 +7,7 @@ Window {
     id: win;
     visible: true;
     width: container.width + 10;
-    height: container.height + (canvas_quadratic.visible ? 280 : 330);
+    height: container.height + (canvas_quadratic.visible ? 340 : 405);
     title: (canvas_quadratic.visible ? qsTr("二次贝塞尔曲线编辑器") : qsTr("三次贝塞尔曲线编辑器")) + " " + version + author;
 
     Item {
@@ -20,7 +20,7 @@ Window {
             anchors.top: parent.top;
             anchors.topMargin: 10;
             width: container.width;
-            height: 20;
+            height: input_canvas_width.height;
             clip: true;
 
             /* 画布宽 */
@@ -45,6 +45,7 @@ Window {
                 inputFont.pixelSize: 20;
                 hintText: "";
                 width: 80;
+                height: 28;
                 onInputAccepted: function() {
                     var width = 0;
                     if (inputText.length > 0) {
@@ -82,6 +83,7 @@ Window {
                 inputFont.pixelSize: 20;
                 hintText: "";
                 width: 80;
+                height: 28;
                 onInputAccepted: function() {
                     var height = 0;
                     if (inputText.length > 0) {
@@ -112,10 +114,10 @@ Window {
                 listmodel_curve.clear();
                 canvas_quadratic.visible = !canvas_quadratic.visible;
                 win.setMinimumWidth(container.width + 10);
-                win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+                win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
                 win.setMaximumWidth(container.width + 10);
-                win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
-                win.setHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+                win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
+                win.setHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
                 if (canvas_quadratic.visible) {
                     for (var i = 0; i < canvas_quadratic.list_curve.length; ++i) {
                         listmodel_curve.append(canvas_quadratic.list_curve[i]);
@@ -588,7 +590,7 @@ Window {
         ListView {
             id: listview_curve;
             width: self.width;
-            height: canvas_quadratic.visible ? 170 : 220;
+            height: canvas_quadratic.visible ? 208 : 274;
             anchors.horizontalCenter: parent.horizontalCenter;
             anchors.top: button_add.bottom;
             anchors.topMargin: 10;
@@ -598,7 +600,7 @@ Window {
             clip: true;
             delegate: Item {
                 width: listview_curve.width;
-                height: canvas_quadratic.visible ? 85 : 110;
+                height: canvas_quadratic.visible ? 104 : 137;
 
                 Rectangle {
                     anchors.fill: parent;
@@ -624,7 +626,6 @@ Window {
                     text: qsTr("起点:");
                     color: "#FF0000";
                     font.pixelSize: 20;
-                    font.bold: true;
                 }
 
                 XTextInput {
@@ -639,9 +640,9 @@ Window {
                     inputText: start_x;
                     inputTextColor: "#FF0000";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
@@ -680,9 +681,9 @@ Window {
                     inputText: start_y;
                     inputTextColor: "#FF0000";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
@@ -719,7 +720,6 @@ Window {
                     text: canvas_quadratic.visible ? qsTr("控制点:") : qsTr("控制点1:");
                     color: "#006400";
                     font.pixelSize: 20;
-                    font.bold: true;
                 }
 
                 XTextInput {
@@ -734,9 +734,9 @@ Window {
                     inputText: control_1_x;
                     inputTextColor: "#006400";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
@@ -775,9 +775,9 @@ Window {
                     inputText: control_1_y;
                     inputTextColor: "#006400";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
@@ -814,7 +814,6 @@ Window {
                     text: qsTr("控制点2:");
                     color: "#00868B";
                     font.pixelSize: 20;
-                    font.bold: true;
                     visible: canvas_quadratic.visible ? false : true;
                 }
 
@@ -830,9 +829,9 @@ Window {
                     inputText: control_2_x;
                     inputTextColor: "#00868B";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     visible: canvas_quadratic.visible ? false : true;
                     onInputTextEdited: function() {
                         var x = 0;
@@ -868,9 +867,9 @@ Window {
                     inputText: control_2_y;
                     inputTextColor: "#00868B";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     visible: canvas_quadratic.visible ? false : true;
                     onInputTextEdited: function() {
                         var y = 0;
@@ -904,7 +903,6 @@ Window {
                     text: qsTr("终点:");
                     color: "#0000FF";
                     font.pixelSize: 20;
-                    font.bold: true;
                 }
 
                 XTextInput {
@@ -919,9 +917,9 @@ Window {
                     inputText: end_x;
                     inputTextColor: "#0000FF";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     onInputTextEdited: function() {
                         var x = 0;
                         if (inputText.length > 0) {
@@ -960,9 +958,9 @@ Window {
                     inputText: end_y;
                     inputTextColor: "#0000FF";
                     inputFont.pixelSize: 20;
-                    inputFont.bold: true;
                     hintText: "";
                     width: 80;
+                    height: 28;
                     onInputTextEdited: function() {
                         var y = 0;
                         if (inputText.length > 0) {
@@ -991,7 +989,7 @@ Window {
 
                 XButton {
                     anchors.top: parent.top;
-                    anchors.topMargin: 5;
+                    anchors.topMargin: 10;
                     anchors.right: parent.right;
                     anchors.rightMargin: 30;
                     hint.text: 1 === debug ? "调试1" : (2 === debug ? "调试2" : "调试关");
@@ -1017,7 +1015,7 @@ Window {
 
                 XButton {
                     anchors.bottom: parent.bottom;
-                    anchors.bottomMargin: 10;
+                    anchors.bottomMargin: 15;
                     anchors.right: parent.right;
                     anchors.rightMargin: 30;
                     hint.text: "删除";
@@ -1046,10 +1044,10 @@ Window {
 
         Component.onCompleted: {
             win.setMinimumWidth(container.width + 10);
-            win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+            win.setMinimumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
             win.setMaximumWidth(container.width + 10);
-            win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
-            win.setHeight(container.height + (canvas_quadratic.visible ? 280 : 330));
+            win.setMaximumHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
+            win.setHeight(container.height + (canvas_quadratic.visible ? 340 : 405));
             if (canvas_quadratic.visible) {
                 listmodel_curve.clear();
                 for (var i = 0; i < canvas_quadratic.list_curve.length; ++i) {
