@@ -607,6 +607,7 @@ Window {
                 id: listmodel_curve;
             }
             clip: true;
+            cacheBuffer: 20;
             delegate: Item {
                 width: listview_curve.width;
                 height: self.modeQuadratic ? 109 : 142;
@@ -989,6 +990,48 @@ Window {
                         onTriggered: {
                             input_end_y.inputText = end_y;
                         }
+                    }
+                }
+
+                XButton {
+                    anchors.bottom: parent.bottom;
+                    anchors.bottomMargin: 10;
+                    anchors.left: parent.left;
+                    anchors.leftMargin: 20;
+                    hint.text: "复制";
+                    hint.color: "#000000";
+                    hint.font.pixelSize: 18;
+                    width: 50;
+                    height: 26;
+                    onButtonClick: function() {
+                        var pt = {
+                            show: true,
+                            debug: 1
+                        };
+                        if (self.modeQuadratic) {
+                            var pt1 = canvas_quadratic.list_curve[index];
+                            pt.start_x = pt1.start_x;
+                            pt.start_y = pt1.start_y;
+                            pt.control_1_x = pt1.control_1_x;
+                            pt.control_1_y = pt1.control_1_y;
+                            pt.control_2_x = pt1.control_2_x;
+                            pt.control_2_y = pt1.control_2_y;
+                            pt.end_x = pt1.end_x;
+                            pt.end_y = pt1.end_y;
+                            canvas_quadratic.list_curve.push(pt);
+                        } else {
+                            var pt2 = canvas_cubic.list_curve[index];
+                            pt.start_x = pt2.start_x;
+                            pt.start_y = pt2.start_y;
+                            pt.control_1_x = pt2.control_1_x;
+                            pt.control_1_y = pt2.control_1_y;
+                            pt.control_2_x = pt2.control_2_x;
+                            pt.control_2_y = pt2.control_2_y;
+                            pt.end_x = pt2.end_x;
+                            pt.end_y = pt2.end_y;
+                            canvas_cubic.list_curve.push(pt);
+                        }
+                        listmodel_curve.append(pt);
                     }
                 }
 
