@@ -12,6 +12,7 @@ Window {
 
     Item {
         anchors.fill: parent;
+        visible: true;
 
         /* 画布宽高设置 */
         Item {
@@ -622,12 +623,52 @@ Window {
             font.pixelSize: 16;
         }
 
+        /* 透明度 */
+        Text {
+            id: text_window_opacity_title;
+            anchors.verticalCenter: button_add.verticalCenter;
+            anchors.right: input_window_opacity.left;
+            anchors.rightMargin: 5;
+            text: qsTr("透明度:");
+            color: "#000000";
+            font.pixelSize: 20;
+        }
+
+        XTextInput {
+            id: input_window_opacity;
+            anchors.right: button_add.left;
+            anchors.rightMargin: 40;
+            anchors.verticalCenter: text_window_opacity_title.verticalCenter;
+            inputValidator: RegExpValidator {   /* 数字 */
+                regExp: /^[0-9]{0,}$/;
+            }
+            inputText: Math.round(win.opacity * 255);
+            inputTextColor: "#000000";
+            inputFont.pixelSize: 20;
+            hintText: "";
+            width: 40;
+            height: 28;
+            onInputAccepted: function() {
+                var opa = 0;
+                if (inputText.length > 0) {
+                    opa = parseInt(inputText);
+                }
+                if (opa < 0) {
+                    opa = 0;
+                } else if (opa > 255) {
+                    opa = 255;
+                }
+                inputText = opa.toString();
+                win.opacity = opa / 255;
+            }
+        }
+
         /* 添加按钮 */
         XButton {
             id: button_add;
             anchors.top: container.bottom;
             anchors.topMargin: 5;
-            anchors.horizontalCenter: parent.horizontalCenter;
+            x: (parent.width / 2) + 20;
             hint.text: "添加曲线";
             hint.color: "#000000";
             hint.font.pixelSize: 20;
