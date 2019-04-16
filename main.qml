@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 
 Window {
-    readonly property string version: "v1.0.0";
+    readonly property string version: "v1.0.1";
     readonly property string author: "（作者：何展然）";
     id: win;
     visible: true;
