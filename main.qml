@@ -367,7 +367,7 @@ Window {
             QtObject {
                 id: self;
                 readonly property int curve_width: 3;   /* 曲线宽度 */
-                readonly property int point_radius: 10; /* 圆点半径 */
+                readonly property int point_radius: 5; /* 圆点半径 */
                 property int width: 480;
                 property int height: 240;
                 property int widthMargin: 0;
