@@ -767,7 +767,7 @@ Window {
                     anchors.top: parent.top;
                     anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: start_x;
                     inputTextColor: "#FF0000";
@@ -779,9 +779,9 @@ Window {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
-                        }
-                        if (x > self.width) {
-                            x = self.width;
+                            if (isNaN(x)) {
+                                x = 0;
+                            }
                         }
                         start_x = x;
                         inputText = x.toString();
@@ -808,7 +808,7 @@ Window {
                     anchors.top: parent.top;
                     anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: start_y;
                     inputTextColor: "#FF0000";
@@ -820,9 +820,9 @@ Window {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
-                        }
-                        if (y > self.height) {
-                            y = self.height;
+                            if (isNaN(y)) {
+                                y = 0;
+                            }
                         }
                         start_y = y;
                         inputText = y.toString();
@@ -860,7 +860,7 @@ Window {
                     anchors.top: input_start_x.bottom;
                     anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: control_1_x;
                     inputTextColor: "#006400";
@@ -872,9 +872,9 @@ Window {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
-                        }
-                        if (x > self.width) {
-                            x = self.width;
+                            if (isNaN(x)) {
+                                x = 0;
+                            }
                         }
                         control_1_x = x;
                         inputText = x.toString();
@@ -901,7 +901,7 @@ Window {
                     anchors.top: input_start_x.bottom;
                     anchors.topMargin: input_control_1_x.anchors.topMargin;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: control_1_y;
                     inputTextColor: "#006400";
@@ -913,9 +913,9 @@ Window {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
-                        }
-                        if (y > self.height) {
-                            y = self.height;
+                            if (isNaN(y)) {
+                                y = 0;
+                            }
                         }
                         control_1_y = y;
                         inputText = y.toString();
@@ -954,7 +954,7 @@ Window {
                     anchors.top: input_control_1_x.bottom;
                     anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: control_2_x;
                     inputTextColor: "#00868B";
@@ -967,9 +967,9 @@ Window {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
-                        }
-                        if (x > self.width) {
-                            x = self.width;
+                            if (isNaN(x)) {
+                                x = 0;
+                            }
                         }
                         control_2_x = x;
                         inputText = x.toString();
@@ -992,7 +992,7 @@ Window {
                     anchors.top: input_control_1_x.bottom;
                     anchors.topMargin: input_control_2_x.anchors.topMargin;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: control_2_y;
                     inputTextColor: "#00868B";
@@ -1005,9 +1005,9 @@ Window {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
-                        }
-                        if (y > self.height) {
-                            y = self.height;
+                            if (isNaN(y)) {
+                                y = 0;
+                            }
                         }
                         control_2_y = y;
                         inputText = y.toString();
@@ -1041,7 +1041,7 @@ Window {
                     anchors.top: self.modeQuadratic ? input_control_1_x.bottom : input_control_2_x.bottom;
                     anchors.topMargin: 5;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: end_x;
                     inputTextColor: "#0000FF";
@@ -1053,9 +1053,9 @@ Window {
                         var x = 0;
                         if (inputText.length > 0) {
                             x = parseInt(inputText);
-                        }
-                        if (x > self.width) {
-                            x = self.width;
+                            if (isNaN(x)) {
+                                x = 0;
+                            }
                         }
                         end_x = x;
                         inputText = x.toString();
@@ -1082,7 +1082,7 @@ Window {
                     anchors.top: self.modeQuadratic ? input_control_1_x.bottom : input_control_2_x.bottom;
                     anchors.topMargin: input_end_x.anchors.topMargin;
                     inputValidator: RegExpValidator {   /* 数字 */
-                        regExp: /^[0-9]{0,}$/;
+                        regExp: /^(\-?)[0-9]{0,}$/;
                     }
                     inputText: end_y;
                     inputTextColor: "#0000FF";
@@ -1094,9 +1094,9 @@ Window {
                         var y = 0;
                         if (inputText.length > 0) {
                             y = parseInt(inputText);
-                        }
-                        if (y > self.height) {
-                            y = self.height;
+                            if (isNaN(y)) {
+                                y = 0;
+                            }
                         }
                         end_y = y;
                         inputText = y.toString();
