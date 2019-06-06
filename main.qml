@@ -256,20 +256,14 @@ Window {
                 property var list_curve: [];
                 id: canvas_cubic;
                 anchors.fill: parent;
-                renderStrategy: Canvas.Threaded;
                 visible: !self.modeQuadratic;
-                onPaint: {
-                    draw();
-                }
-                function draw() {
+                function render() {
                     var ctx = getContext("2d");
+                    ctx.clearRect(0, 0, self.width + 2 * self.widthMargin, self.height + 2 * self.heightMargin);
                     ctx.fillStyle = "#DDDDDD";
                     ctx.fillRect(0, 0, self.width + 2 * self.widthMargin, self.height + 2 * self.heightMargin);
                     ctx.fillStyle = "#EEEEEE";
                     ctx.fillRect(self.widthMargin, self.heightMargin, self.width, self.height);
-                    if (0 === list_curve.length) {
-                        return;
-                    }
                     for (var i = 0; i < list_curve.length; ++i) {
                         var pt = list_curve[i];
                         /* 坐标偏移计算 */
@@ -300,6 +294,10 @@ Window {
                             }
                         }
                     }
+                    requestAnimationFrame(render);
+                }
+                Component.onCompleted: {
+                    requestAnimationFrame(render);
                 }
             }
 
@@ -308,20 +306,14 @@ Window {
                 property var list_curve: [];
                 id: canvas_quadratic;
                 anchors.fill: parent;
-                renderStrategy: Canvas.Threaded;
                 visible: self.modeQuadratic;
-                onPaint: {
-                    draw();
-                }
-                function draw() {
+                function render() {
                     var ctx = getContext("2d");
+                    ctx.clearRect(0, 0, self.width + 2 * self.widthMargin, self.height + 2 * self.heightMargin);
                     ctx.fillStyle = "#DDDDDD";
                     ctx.fillRect(0, 0, self.width + 2 * self.widthMargin, self.height + 2 * self.heightMargin);
                     ctx.fillStyle = "#EEEEEE";
                     ctx.fillRect(self.widthMargin, self.heightMargin, self.width, self.height);
-                    if (0 === list_curve.length) {
-                        return;
-                    }
                     for (var i = 0; i < list_curve.length; ++i) {
                         var pt = list_curve[i];
                         /* 坐标偏移计算 */
@@ -348,18 +340,10 @@ Window {
                             }
                         }
                     }
+                    requestAnimationFrame(render);
                 }
-            }
-
-            /* 帧率定时器 */
-            Timer {
-                id: timer_fps;
-                interval: (1000 / 60);  /* 帧率:60(FPS) */
-                repeat: true;
-                running: true;
-                onTriggered: {
-                    canvas_quadratic.requestAnimationFrame(canvas_quadratic.draw);
-                    canvas_cubic.requestAnimationFrame(canvas_cubic.draw);
+                Component.onCompleted: {
+                    requestAnimationFrame(render);
                 }
             }
 
