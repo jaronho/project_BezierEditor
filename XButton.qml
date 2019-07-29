@@ -22,6 +22,7 @@ Item {
     property int mouseTopMargin: 0;                                 /* 鼠标触发上边距 */
     property int mouseRightMargin: 0;                               /* 鼠标触发右边距 */
     property int mouseBottomMargin: 0;                              /* 鼠标触发下边距 */
+    property bool hovered: self.isMouseHover;
 
     width: 50;
     height: 20;

@@ -72,6 +72,19 @@ void Proxy::writeFileContent(QString filePath, QString content) {
     file.close();
 }
 
+bool Proxy::isWindowOnTop(void) {
+    if (mWin) {
+        return (Qt::WindowStaysOnTopHint & mWin->getView()->flags()) > 0;
+    }
+    return false;
+}
+
+void Proxy::setWindowOnTop(bool flag) {
+    if (mWin) {
+        mWin->setFlag(Qt::WindowStaysOnTopHint, flag);
+    }
+}
+
 QString Proxy::getWindowTitle(void) {
     if (mWin) {
         return mWin->getView()->title();

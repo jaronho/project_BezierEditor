@@ -167,6 +167,26 @@ Item {
             }
         }
 
+        /* 置顶按钮 */
+        XButton {
+            id: button_stay_top;
+            anchors.horizontalCenter: parent.horizontalCenter;
+            anchors.verticalCenter: input_canvas_width.verticalCenter;
+            width: proxy.isWindowOnTop() ? 110 : 90;
+            height: 28;
+            hint.text: proxy.isWindowOnTop() ? qsTr("√前端显示") : qsTr("前端显示");
+            hint.font.pixelSize: 20;
+            ToolTip.visible: hovered;
+            ToolTip.text: proxy.isWindowOnTop() ? qsTr("当前窗口已置顶于最前端显示") : qsTr("当前窗口未置顶");
+            onButtonClick: function() {
+                var onTop = !proxy.isWindowOnTop()
+                proxy.setWindowOnTop(onTop);
+                width =  onTop ? 110 : 90;
+                hint.text = onTop ? qsTr("√前端显示") : qsTr("前端显示");
+                ToolTip.text = onTop ? qsTr("当前窗口已置顶于最前端显示") : qsTr("当前窗口未置顶");
+            }
+        }
+
         /* 画布高 */
         Text {
             id: text_canvas_height_title;
@@ -519,6 +539,9 @@ Item {
                             }
                         }
                     }
+                }
+                if (curve_index >= 0) {
+                    listview_curve.positionViewAtIndex(curve_index, ListView.Center);
                 }
             }
             onReleased: {

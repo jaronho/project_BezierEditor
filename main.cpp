@@ -14,6 +14,11 @@ int main(int argc, char *argv[]) {
     XWindow window(QSize(480, 585), QSize(480, 585), QSize(480, 585));
     Proxy::getInstance()->init(&window);
     window.setFlag(Qt::Window, true);
+    window.setFlag(Qt::WindowTitleHint, true);
+    window.setFlag(Qt::WindowSystemMenuHint, true);
+    window.setFlag(Qt::WindowMinMaxButtonsHint, true);
+    window.setFlag(Qt::WindowStaysOnTopHint, false);
+    window.setFlag(Qt::WindowCloseButtonHint, true);
     window.setContextProperty("proxy", Proxy::getInstance());
     window.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
     window.show();

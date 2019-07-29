@@ -65,6 +65,12 @@ public slots:
     /* 写入本地文件内容 */
     void writeFileContent(QString filePath, QString content);
 
+    /* 窗口是否置顶 */
+    bool isWindowOnTop(void);
+
+    /* 设置窗口置顶 */
+    void setWindowOnTop(bool flag);
+
     /* 获取窗口标题 */
     QString getWindowTitle(void);
 
