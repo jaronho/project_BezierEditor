@@ -164,6 +164,7 @@ Item {
                 inputText = width.toString();
                 self.widthMargin = width;
                 updateSizeAndTitle();
+                button_stay_top.updateWidth();
             }
         }
 
@@ -172,17 +173,33 @@ Item {
             id: button_stay_top;
             anchors.horizontalCenter: parent.horizontalCenter;
             anchors.verticalCenter: input_canvas_width.verticalCenter;
-            width: 110;
+            width: self.widthMargin < 25 ? 25 : 70;
             height: 28;
-            hint.text: proxy.isWindowOnTop() ? qsTr("●前端显示") : qsTr("○前端显示");
+            hint.text: hintText();
             hint.font.pixelSize: 20;
             ToolTip.visible: hovered;
-            ToolTip.text: proxy.isWindowOnTop() ? qsTr("当前窗口已置顶于最前端显示") : qsTr("当前窗口未置顶");
+            ToolTip.text: toolTipText();
             onButtonClick: function() {
-                var onTop = !proxy.isWindowOnTop()
-                proxy.setWindowOnTop(onTop);
-                hint.text = onTop ? qsTr("●前端显示") : qsTr("○前端显示");
-                ToolTip.text = onTop ? qsTr("当前窗口已置顶于最前端显示") : qsTr("当前窗口未置顶");
+                proxy.setWindowOnTop(!proxy.isWindowOnTop());
+                hint.text = hintText();
+                ToolTip.text = toolTipText();
+            }
+            function updateWidth() {
+                if (self.widthMargin < 25) {
+                    width = 25;
+                } else {
+                    width = 70;
+                }
+                hint.text = hintText();
+            }
+            function hintText() {
+                if (self.widthMargin < 25) {
+                    return proxy.isWindowOnTop() ? qsTr("●") : qsTr("○");
+                }
+                return proxy.isWindowOnTop() ? qsTr("●置顶") : qsTr("○置顶");
+            }
+            function toolTipText() {
+                return "设置窗口是否一直置于前端显示, 当前: " + (proxy.isWindowOnTop() ? "置顶" : "非置顶");
             }
         }
 
