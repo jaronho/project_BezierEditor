@@ -491,8 +491,9 @@ Item {
 
         /* 鼠标操作区域 */
         MouseArea {
-            property int curve_index: -1;   /* 曲线索引 */
-            property int point_type: 0;     /* 点类型:1.起点,2.控制点1,3.控制点2,4.终点 */
+            property bool just_press: false;    /* 是否刚按下 */
+            property int curve_index: -1;       /* 曲线索引 */
+            property int point_type: 0;         /* 点类型:1.起点,2.控制点1,3.控制点2,4.终点 */
             id: mouse_area;
             x: 0;
             y: 0;
@@ -634,6 +635,7 @@ Item {
                 if (Qt.LeftButton !== mouse.button) {
                     return;
                 }
+                just_press = true;
                 curve_index = -1;
                 point_type = 0;
                 if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
@@ -684,10 +686,14 @@ Item {
                 }
             }
             onReleased: {
+                just_press = false;
                 curve_index = -1;
                 point_type = 0;
             }
             onMouseXChanged: {
+                if (just_press) {
+                    return;
+                }
                 if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                     if (curve_index >= 0) {
                         var pt1 = canvas_quadratic.list_curve[curve_index];
@@ -726,6 +732,10 @@ Item {
                 }
             }
             onMouseYChanged: {
+                if (just_press) {
+                    just_press = false;
+                    return;
+                }
                 if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                     if (curve_index >= 0) {
                         var pt1 = canvas_quadratic.list_curve[curve_index];
@@ -936,6 +946,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_start_x.inputText = start_x;
                         }
@@ -982,6 +995,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_start_y.inputText = start_y;
                         }
@@ -1039,6 +1055,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_control_1_x.inputText = control_1_x;
                         }
@@ -1085,6 +1104,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_control_1_y.inputText = control_1_y;
                         }
@@ -1140,6 +1162,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_control_2_x.inputText = control_2_x;
                         }
@@ -1183,6 +1208,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_control_2_y.inputText = control_2_y;
                         }
@@ -1240,6 +1268,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_end_x.inputText = end_x;
                         }
@@ -1286,6 +1317,9 @@ Item {
                     repeat: true;
                     running: true;
                     onTriggered: {
+                        if (index === mouse_area.curve_index) {
+                            parent.inputFocus = false;
+                        }
                         if (!parent.inputFocus) {
                             input_end_y.inputText = end_y;
                         }
