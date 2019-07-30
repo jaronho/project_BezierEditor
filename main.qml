@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
 import QtQuick.Window 2.12
 
 Item {
@@ -497,35 +498,157 @@ Item {
             y: 0;
             width: self.renderWidth + 2 * self.widthMargin;
             height: self.renderHeight + 2 * self.heightMargin;
+            acceptedButtons: Qt.LeftButton | Qt.RightButton;
+            onClicked: {
+                if (Qt.RightButton === mouse.button) {
+                    var curveIndex = -1;
+                    var pointType = 0;
+                    if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
+                        for (var i = canvas_quadratic.list_curve.length - 1; i >= 0; --i) {
+                            var pt1 = canvas_quadratic.list_curve[i];
+                            if (pt1.show && (1 === pt1.debug || 2 === pt1.debug)) {
+                                if (self.isPointInCircle(pt1.end_x + self.widthMargin, pt1.end_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了终点 */
+                                    curveIndex = i;
+                                    pointType = 4;
+                                    break;
+                                } else if (self.isPointInCircle(pt1.control_1_x + self.widthMargin, pt1.control_1_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了控制点 */
+                                    curveIndex = i;
+                                    pointType = 2;
+                                    break;
+                                } else if (self.isPointInCircle(pt1.start_x + self.widthMargin, pt1.start_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了起点 */
+                                    curveIndex = i;
+                                    pointType = 1;
+                                    break;
+                                }
+                            }
+                        }
+                        if (curveIndex >= 0) {
+                            pt1 = canvas_quadratic.list_curve[curveIndex];
+                            var x1 = 0, y1 = 0;
+                            if (1 === pointType) {
+                                x1 = pt1.start_x;
+                                y1 = pt1.start_y;
+                            } else if (2 === pointType) {
+                                x1 = pt1.control_1_x;
+                                y1 = pt1.control_1_y;
+                            } else if (4 === pointType) {
+                                x1 = pt1.end_x;
+                                y1 = pt1.end_y;
+                            } else {
+                                return;
+                            }
+                            popup_edit_dialog.open(x1, y1, pt1.debug, function(x, y) {
+                                if (1 === pointType) {
+                                    pt1.start_x = x;
+                                    pt1.start_y = y;
+                                    listmodel_curve.get(curveIndex).start_x = x;
+                                    listmodel_curve.get(curveIndex).start_y = y;
+                                } else if (2 === pointType) {
+                                    pt1.control_1_x = x;
+                                    pt1.control_1_y = y;
+                                    listmodel_curve.get(curveIndex).control_1_x = x;
+                                    listmodel_curve.get(curveIndex).control_1_y = y;
+                                } else if (4 === pointType) {
+                                    pt1.end_x = x;
+                                    pt1.end_y = y;
+                                    listmodel_curve.get(curveIndex).end_x = x;
+                                    listmodel_curve.get(curveIndex).end_y = y;
+                                }
+                            }, function(debug) {
+                                pt1.debug = debug;
+                                listmodel_curve.get(curveIndex).debug = debug;
+                            });
+                        }
+                    } else {  /* 三次贝塞尔曲线 */
+                        for (var j = canvas_cubic.list_curve.length - 1; j >= 0; --j) {
+                            var pt2 = canvas_cubic.list_curve[j];
+                            if (pt2.show && (1 === pt2.debug || 2 === pt2.debug)) {
+                                if (self.isPointInCircle(pt2.end_x + self.widthMargin, pt2.end_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了终点 */
+                                    curveIndex = j;
+                                    pointType = 4;
+                                    break;
+                                } else if (self.isPointInCircle(pt2.control_2_x + self.widthMargin, pt2.control_2_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了控制点2 */
+                                    curveIndex = j;
+                                    pointType = 3;
+                                    break;
+                                } else if (self.isPointInCircle(pt2.control_1_x + self.widthMargin, pt2.control_1_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了控制点1 */
+                                    curveIndex = j;
+                                    pointType = 2;
+                                    break;
+                                } else if (self.isPointInCircle(pt2.start_x + self.widthMargin, pt2.start_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了起点 */
+                                    curveIndex = j;
+                                    pointType = 1;
+                                    break;
+                                }
+                            }
+                        }
+                        if (curveIndex >= 0) {
+                            pt2 = canvas_cubic.list_curve[curveIndex];
+                            var x2 = 0, y2 = 0;
+                            if (1 === pointType) {
+                                x2 = pt2.start_x;
+                                y2 = pt2.start_y;
+                            } else if (2 === pointType) {
+                                x2 = pt2.control_1_x;
+                                y2 = pt2.control_1_y;
+                            } else if (3 === pointType) {
+                                x2 = pt2.control_2_x;
+                                y2 = pt2.control_2_y;
+                            } else if (4 === pointType) {
+                                x2 = pt2.end_x;
+                                y2 = pt2.end_y;
+                            } else {
+                                return;
+                            }
+                            popup_edit_dialog.open(x2, y2, pt2.debug, function(x, y) {
+                                if (1 === pointType) {
+                                    pt2.start_x = x;
+                                    pt2.start_y = y;
+                                    listmodel_curve.get(curveIndex).start_x = x;
+                                    listmodel_curve.get(curveIndex).start_y = y;
+                                } else if (2 === pointType) {
+                                    pt2.control_1_x = x;
+                                    pt2.control_1_y = y;
+                                    listmodel_curve.get(curveIndex).control_1_x = x;
+                                    listmodel_curve.get(curveIndex).control_1_y = y;
+                                } else if (3 === pointType) {
+                                    pt2.control_2_x = x;
+                                    pt2.control_2_y = y;
+                                    listmodel_curve.get(curveIndex).control_2_x = x;
+                                    listmodel_curve.get(curveIndex).control_2_y = y;
+                                } else if (4 === pointType) {
+                                    pt2.end_x = x;
+                                    pt2.end_y = y;
+                                    listmodel_curve.get(curveIndex).end_x = x;
+                                    listmodel_curve.get(curveIndex).end_y = y;
+                                }
+                            }, function(debug) {
+                                pt2.debug = debug;
+                                listmodel_curve.get(curveIndex).debug = debug;
+                            });
+                        }
+                    }
+                }
+            }
             onPressed: {
-                var mX = mouseX;
-                var mY = mouseY;
-//                if (mX < 0) {
-//                    mX = 0;
-//                } else if (mX > width) {
-//                    mX = width;
-//                }
-//                if (mY < 0) {
-//                    mY = 0;
-//                } else if (mY > height) {
-//                    mY = height;
-//                }
-                //console.log("on pressed: (" + mX + ", " + mY + ")");
+                if (Qt.LeftButton !== mouse.button) {
+                    return;
+                }
                 curve_index = -1;
                 point_type = 0;
                 if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                     for (var i = canvas_quadratic.list_curve.length - 1; i >= 0; --i) {
                         var pt1 = canvas_quadratic.list_curve[i];
                         if (pt1.show && (1 === pt1.debug || 2 === pt1.debug)) {
-                            if (self.isPointInCircle(pt1.end_x + self.widthMargin, pt1.end_y + self.heightMargin, self.point_radius, mX, mY)) {  /* 点击了终点 */
+                            if (self.isPointInCircle(pt1.end_x + self.widthMargin, pt1.end_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了终点 */
                                 curve_index = i;
                                 point_type = 4;
                                 break;
-                            } else if (self.isPointInCircle(pt1.control_1_x + self.widthMargin, pt1.control_1_y + self.heightMargin, self.point_radius, mX, mY)) {  /* 点击了控制点 */
+                            } else if (self.isPointInCircle(pt1.control_1_x + self.widthMargin, pt1.control_1_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了控制点 */
                                 curve_index = i;
                                 point_type = 2;
                                 break;
-                            } else if (self.isPointInCircle(pt1.start_x + self.widthMargin, pt1.start_y + self.heightMargin, self.point_radius, mX, mY)) {  /* 点击了起点 */
+                            } else if (self.isPointInCircle(pt1.start_x + self.widthMargin, pt1.start_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了起点 */
                                 curve_index = i;
                                 point_type = 1;
                                 break;
@@ -536,19 +659,19 @@ Item {
                     for (var j = canvas_cubic.list_curve.length - 1; j >= 0; --j) {
                         var pt2 = canvas_cubic.list_curve[j];
                         if (pt2.show && (1 === pt2.debug || 2 === pt2.debug)) {
-                            if (self.isPointInCircle(pt2.end_x + self.widthMargin, pt2.end_y + self.heightMargin, self.point_radius, mX, mY)) {  /* 点击了终点 */
+                            if (self.isPointInCircle(pt2.end_x + self.widthMargin, pt2.end_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了终点 */
                                 curve_index = j;
                                 point_type = 4;
                                 break;
-                            } else if (self.isPointInCircle(pt2.control_2_x + self.widthMargin, pt2.control_2_y + self.heightMargin, self.point_radius, mX, mY)) {  /* 点击了控制点2 */
+                            } else if (self.isPointInCircle(pt2.control_2_x + self.widthMargin, pt2.control_2_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了控制点2 */
                                 curve_index = j;
                                 point_type = 3;
                                 break;
-                            } else if (self.isPointInCircle(pt2.control_1_x + self.widthMargin, pt2.control_1_y + self.heightMargin, self.point_radius, mX, mY)) {  /* 点击了控制点1 */
+                            } else if (self.isPointInCircle(pt2.control_1_x + self.widthMargin, pt2.control_1_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了控制点1 */
                                 curve_index = j;
                                 point_type = 2;
                                 break;
-                            } else if (self.isPointInCircle(pt2.start_x + self.widthMargin, pt2.start_y + self.heightMargin, self.point_radius, mX, mY)) {  /* 点击了起点 */
+                            } else if (self.isPointInCircle(pt2.start_x + self.widthMargin, pt2.start_y + self.heightMargin, self.point_radius, mouseX, mouseY)) {  /* 点击了起点 */
                                 curve_index = j;
                                 point_type = 1;
                                 break;
@@ -561,101 +684,61 @@ Item {
                 }
             }
             onReleased: {
-                var mX = mouseX;
-                var mY = mouseY;
-//                if (mX < 0) {
-//                    mX = 0;
-//                } else if (mX > width) {
-//                    mX = width;
-//                }
-//                if (mY < 0) {
-//                    mY = 0;
-//                } else if (mY > height) {
-//                    mY = height;
-//                }
-                //console.log("on released: (" + mX + ", " + mY + ")");
                 curve_index = -1;
                 point_type = 0;
             }
             onMouseXChanged: {
-                var mX = mouseX;
-                var mY = mouseY;
-//                if (mX < 0) {
-//                    mX = 0;
-//                } else if (mX > width) {
-//                    mX = width;
-//                }
-//                if (mY < 0) {
-//                    mY = 0;
-//                } else if (mY > height) {
-//                    mY = height;
-//                }
-                //console.log("on x changed: (" + mX + ", " + mY + ")");
                 if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                     if (curve_index >= 0) {
                         var pt1 = canvas_quadratic.list_curve[curve_index];
                         if (pt1.show && (1 === pt1.debug || 2 === pt1.debug)) {
                             if (1 === point_type) {
-                                pt1.start_x = mX - self.widthMargin;
-                                listmodel_curve.get(curve_index).start_x = mX - self.widthMargin;
+                                pt1.start_x = mouseX - self.widthMargin;
+                                listmodel_curve.get(curve_index).start_x = mouseX - self.widthMargin;
                             } else if (2 === point_type) {
-                                pt1.control_1_x = mX - self.widthMargin;
-                                listmodel_curve.get(curve_index).control_1_x = mX - self.widthMargin;
+                                pt1.control_1_x = mouseX - self.widthMargin;
+                                listmodel_curve.get(curve_index).control_1_x = mouseX - self.widthMargin;
                             } else if (4 === point_type) {
-                                pt1.end_x = mX - self.widthMargin;
-                                listmodel_curve.get(curve_index).end_x = mX - self.widthMargin;
+                                pt1.end_x = mouseX - self.widthMargin;
+                                listmodel_curve.get(curve_index).end_x = mouseX - self.widthMargin;
                             }
                         }
                     }
-
                 } else {  /* 三次贝塞尔曲线 */
                     if (curve_index >= 0) {
                         var pt2 = canvas_cubic.list_curve[curve_index];
                         if (pt2.show && (1 === pt2.debug || 2 === pt2.debug)) {
                             if (1 === point_type) {
-                                pt2.start_x = mX - self.widthMargin;
-                                listmodel_curve.get(curve_index).start_x = mX - self.widthMargin;
+                                pt2.start_x = mouseX - self.widthMargin;
+                                listmodel_curve.get(curve_index).start_x = mouseX - self.widthMargin;
                             } else if (2 === point_type) {
-                                pt2.control_1_x = mX - self.widthMargin;
-                                listmodel_curve.get(curve_index).control_1_x = mX - self.widthMargin;
+                                pt2.control_1_x = mouseX - self.widthMargin;
+                                listmodel_curve.get(curve_index).control_1_x = mouseX - self.widthMargin;
                             } else if (3 === point_type) {
-                                pt2.control_2_x = mX - self.widthMargin;
-                                listmodel_curve.get(curve_index).control_2_x = mX - self.widthMargin;
+                                pt2.control_2_x = mouseX - self.widthMargin;
+                                listmodel_curve.get(curve_index).control_2_x = mouseX - self.widthMargin;
                             } else if (4 === point_type) {
-                                pt2.end_x = mX - self.widthMargin;
-                                listmodel_curve.get(curve_index).end_x = mX - self.widthMargin;
+                                pt2.end_x = mouseX - self.widthMargin;
+                                listmodel_curve.get(curve_index).end_x = mouseX - self.widthMargin;
                             }
                         }
                     }
                 }
             }
             onMouseYChanged: {
-                var mX = mouseX;
-                var mY = mouseY;
-//                if (mX < 0) {
-//                    mX = 0;
-//                } else if (mX > width) {
-//                    mX = width;
-//                }
-//                if (mY < 0) {
-//                    mY = 0;
-//                } else if (mY > height) {
-//                    mY = height;
-//                }
-                //console.log("on y changed: (" + mX + ", " + mY + ")");
                 if (self.modeQuadratic) { /* 二次贝塞尔曲线 */
                     if (curve_index >= 0) {
                         var pt1 = canvas_quadratic.list_curve[curve_index];
                         if (pt1.show && (1 === pt1.debug || 2 === pt1.debug)) {
                             if (1 === point_type) {
-                                pt1.start_y = mY - self.heightMargin;
-                                listmodel_curve.get(curve_index).start_y = mY - self.heightMargin;
+                                pt1.start_y = mouseY - self.heightMargin;
+                                listmodel_curve.get(curve_index).start_y = mouseY - self.heightMargin;
                             } else if (2 === point_type) {
-                                pt1.control_1_y = mY - self.heightMargin;
-                                listmodel_curve.get(curve_index).control_1_y = mY - self.heightMargin;
+                                pt1.control_1_y = mouseY - self.heightMargin;
+                                listmodel_curve.get(curve_index).control_1_y = mouseY - self.heightMargin;
                             } else if (4 === point_type) {
-                                pt1.end_y = mY - self.heightMargin;
-                                listmodel_curve.get(curve_index).end_y = mY - self.heightMargin;
+                                pt1.end_y = mouseY - self.heightMargin;
+                                listmodel_curve.get(curve_index).end_y = mouseY - self.heightMargin;
                             }
                         }
                     }
@@ -664,17 +747,17 @@ Item {
                         var pt2 = canvas_cubic.list_curve[curve_index];
                         if (pt2.show && (1 === pt2.debug || 2 === pt2.debug)) {
                             if (1 === point_type) {
-                                pt2.start_y = mY - self.heightMargin;
-                                listmodel_curve.get(curve_index).start_y = mY - self.heightMargin;
+                                pt2.start_y = mouseY - self.heightMargin;
+                                listmodel_curve.get(curve_index).start_y = mouseY - self.heightMargin;
                             } else if (2 === point_type) {
-                                pt2.control_1_y = mY - self.heightMargin;
-                                listmodel_curve.get(curve_index).control_1_y = mY - self.heightMargin;
+                                pt2.control_1_y = mouseY - self.heightMargin;
+                                listmodel_curve.get(curve_index).control_1_y = mouseY - self.heightMargin;
                             } else if (3 === point_type) {
-                                pt2.control_2_y = mY - self.heightMargin;
-                                listmodel_curve.get(curve_index).control_2_y = mY - self.heightMargin;
+                                pt2.control_2_y = mouseY - self.heightMargin;
+                                listmodel_curve.get(curve_index).control_2_y = mouseY - self.heightMargin;
                             } else if (4 === point_type) {
-                                pt2.end_y = mY - self.heightMargin;
-                                listmodel_curve.get(curve_index).end_y = mY - self.heightMargin;
+                                pt2.end_y = mouseY - self.heightMargin;
+                                listmodel_curve.get(curve_index).end_y = mouseY - self.heightMargin;
                             }
                         }
                     }
@@ -829,7 +912,7 @@ Item {
                 hintText: "";
                 width: 80;
                 height: 28;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var x = 0;
                     if (inputText.length > 0) {
                         x = parseInt(inputText);
@@ -845,12 +928,17 @@ Item {
                         canvas_cubic.list_curve[index].start_x = x;
                     }
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_start_x.inputText = start_x;
+                        if (!parent.inputFocus) {
+                            input_start_x.inputText = start_x;
+                        }
                     }
                 }
             }
@@ -870,7 +958,7 @@ Item {
                 hintText: "";
                 width: 80;
                 height: 28;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var y = 0;
                     if (inputText.length > 0) {
                         y = parseInt(inputText);
@@ -886,12 +974,17 @@ Item {
                         canvas_cubic.list_curve[index].start_y = y;
                     }
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_start_y.inputText = start_y;
+                        if (!parent.inputFocus) {
+                            input_start_y.inputText = start_y;
+                        }
                     }
                 }
             }
@@ -922,7 +1015,7 @@ Item {
                 hintText: "";
                 width: 80;
                 height: 28;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var x = 0;
                     if (inputText.length > 0) {
                         x = parseInt(inputText);
@@ -938,12 +1031,17 @@ Item {
                         canvas_cubic.list_curve[index].control_1_x = x;
                     }
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_control_1_x.inputText = control_1_x;
+                        if (!parent.inputFocus) {
+                            input_control_1_x.inputText = control_1_x;
+                        }
                     }
                 }
             }
@@ -963,7 +1061,7 @@ Item {
                 hintText: "";
                 width: 80;
                 height: 28;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var y = 0;
                     if (inputText.length > 0) {
                         y = parseInt(inputText);
@@ -979,12 +1077,17 @@ Item {
                         canvas_cubic.list_curve[index].control_1_y = y;
                     }
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_control_1_y.inputText = control_1_y;
+                        if (!parent.inputFocus) {
+                            input_control_1_y.inputText = control_1_y;
+                        }
                     }
                 }
             }
@@ -1017,7 +1120,7 @@ Item {
                 width: 80;
                 height: 28;
                 visible: self.modeQuadratic ? false : true;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var x = 0;
                     if (inputText.length > 0) {
                         x = parseInt(inputText);
@@ -1029,12 +1132,17 @@ Item {
                     inputText = x.toString();
                     canvas_cubic.list_curve[index].control_2_x = x;
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_control_2_x.inputText = control_2_x;
+                        if (!parent.inputFocus) {
+                            input_control_2_x.inputText = control_2_x;
+                        }
                     }
                 }
             }
@@ -1055,7 +1163,7 @@ Item {
                 width: 80;
                 height: 28;
                 visible: self.modeQuadratic ? false : true;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var y = 0;
                     if (inputText.length > 0) {
                         y = parseInt(inputText);
@@ -1067,12 +1175,17 @@ Item {
                     inputText = y.toString();
                     canvas_cubic.list_curve[index].control_2_y = y;
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_control_2_y.inputText = control_2_y;
+                        if (!parent.inputFocus) {
+                            input_control_2_y.inputText = control_2_y;
+                        }
                     }
                 }
             }
@@ -1103,7 +1216,7 @@ Item {
                 hintText: "";
                 width: 80;
                 height: 28;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var x = 0;
                     if (inputText.length > 0) {
                         x = parseInt(inputText);
@@ -1119,12 +1232,17 @@ Item {
                         canvas_cubic.list_curve[index].end_x = x;
                     }
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_end_x.inputText = end_x;
+                        if (!parent.inputFocus) {
+                            input_end_x.inputText = end_x;
+                        }
                     }
                 }
             }
@@ -1144,7 +1262,7 @@ Item {
                 hintText: "";
                 width: 80;
                 height: 28;
-                onInputTextEdited: function() {
+                onInputEditingFinished: function() {
                     var y = 0;
                     if (inputText.length > 0) {
                         y = parseInt(inputText);
@@ -1160,12 +1278,17 @@ Item {
                         canvas_cubic.list_curve[index].end_y = y;
                     }
                 }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
                 Timer {
                     interval: 100;
                     repeat: true;
                     running: true;
                     onTriggered: {
-                        input_end_y.inputText = end_y;
+                        if (!parent.inputFocus) {
+                            input_end_y.inputText = end_y;
+                        }
                     }
                 }
             }
@@ -1283,6 +1406,196 @@ Item {
                 anchors.bottom: parent.bottom;
                 color: "#F5F5F5";
             }
+        }
+    }
+
+    /* 坐标编辑对话框框 */
+    Popup {
+        id: popup_edit_dialog;
+        width: 260;
+        height: 140;
+        anchors.centerIn: parent;
+        modal: true;
+        closePolicy: Popup.NoAutoClose;
+        property int debug: 0;
+        property var editCallback: null;
+        property var debugCallback: null;
+        background: Rectangle {
+            anchors.fill: parent;
+            color: "white"
+            radius: 5;
+
+            Text {
+                anchors.top: parent.top;
+                anchors.topMargin: 10;
+                anchors.horizontalCenter: parent.horizontalCenter;
+                text: "编辑坐标";
+                color: "#000000";
+                font.pixelSize: 20;
+            }
+
+            Rectangle {
+                anchors.left: parent.left;
+                anchors.leftMargin: 10;
+                anchors.right: parent.right;
+                anchors.rightMargin: 10;
+                anchors.top: parent.top;
+                anchors.topMargin: 35;
+                height: 1;
+                color: "#BBBBBB";
+            }
+
+            Text {
+                id: text_edit_dialog_x;
+                horizontalAlignment: Text.AlignLeft;
+                verticalAlignment: Text.AlignVCenter;
+                anchors.verticalCenter: parent.verticalCenter;
+                anchors.left: parent.left;
+                anchors.leftMargin: (parent.width - (width +
+                                                    textinput_edit_dialog_x.anchors.leftMargin + textinput_edit_dialog_x.width +
+                                                    text_edit_dialog_y.anchors.leftMargin + text_edit_dialog_y.width +
+                                                    textinput_edit_dialog_y.anchors.leftMargin + textinput_edit_dialog_y.width)) / 2;
+                text: "x:";
+                color: "#000000";
+                font.pixelSize: 18;
+            }
+
+            XTextInput {
+                id: textinput_edit_dialog_x;
+                anchors.verticalCenter: parent.verticalCenter;
+                anchors.left: text_edit_dialog_x.right;
+                anchors.leftMargin: 5;
+                inputValidator: RegExpValidator {   /* 数字 */
+                    regExp: /^(\-?)[0-9]{0,}$/;
+                }
+                inputTextColor: "#000000";
+                inputFont.pixelSize: 18;
+                hintText: "";
+                width: 60;
+                height: 28;
+                onInputEditingFinished: function() {
+                    var iNum = 0;
+                    if (inputText.length > 0) {
+                        iNum = parseInt(inputText);
+                        if (isNaN(iNum)) {
+                            iNum = 0;
+                        }
+                    }
+                    inputText = iNum;
+                }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
+            }
+
+            Text {
+                id: text_edit_dialog_y;
+                horizontalAlignment: Text.AlignLeft;
+                verticalAlignment: Text.AlignVCenter;
+                anchors.verticalCenter: parent.verticalCenter;
+                anchors.left: textinput_edit_dialog_x.right;
+                anchors.leftMargin: 30;
+                text: "y:";
+                color: "#000000";
+                font.pixelSize: 18;
+            }
+
+            XTextInput {
+                id: textinput_edit_dialog_y;
+                anchors.verticalCenter: parent.verticalCenter;
+                anchors.left: text_edit_dialog_y.right;
+                anchors.leftMargin: 5;
+                inputValidator: RegExpValidator {   /* 数字 */
+                    regExp: /^(\-?)[0-9]{0,}$/;
+                }
+                inputTextColor: "#000000";
+                inputFont.pixelSize: 18;
+                hintText: "";
+                width: 60;
+                height: 28;
+                onInputEditingFinished: function() {
+                    var iNum = 0;
+                    if (inputText.length > 0) {
+                        iNum = parseInt(inputText);
+                        if (isNaN(iNum)) {
+                            iNum = 0;
+                        }
+                    }
+                    inputText = iNum;
+                }
+                onInputAccepted: function() {
+                    inputFocus = false;
+                }
+            }
+
+            XButton {
+                width: 50;
+                height: 25;
+                x: (parent.width / 2 - width / 2) / 2 - width / 2;
+                anchors.bottom: parent.bottom;
+                anchors.bottomMargin: 10;
+                hint.text: "修改";
+                hint.color: "#000000";
+                hint.font.pixelSize: 18;
+                onButtonClick: function() {
+                    popup_edit_dialog.close();
+                    var tmpEditCB = popup_edit_dialog.editCallback;
+                    popup_edit_dialog.editCallback = null;
+                    if ('function' === typeof(tmpEditCB)) {
+                        tmpEditCB(parseInt(textinput_edit_dialog_x.inputText), parseInt(textinput_edit_dialog_y.inputText));
+                    }
+                }
+            }
+
+            XButton {
+                width: 60;
+                height: 25;
+                anchors.horizontalCenter: parent.horizontalCenter;
+                anchors.bottom: parent.bottom;
+                anchors.bottomMargin: 10;
+                hint.text: 1 === popup_edit_dialog.debug ? "调试1" : (2 === popup_edit_dialog.debug ? "调试2" : "调试关");
+                hint.color: "#000000";
+                hint.font.pixelSize: 18;
+                onButtonClick: function() {
+                    if (0 === popup_edit_dialog.debug) {
+                        popup_edit_dialog.debug = 1;
+                    } else if (1 === popup_edit_dialog.debug) {
+                        popup_edit_dialog.debug = 2;
+                    } else if (2 === popup_edit_dialog.debug) {
+                        popup_edit_dialog.debug = 0;
+                    }
+                    if ('function' === typeof(popup_edit_dialog.debugCallback)) {
+                        popup_edit_dialog.debugCallback(popup_edit_dialog.debug);
+                    }
+                }
+            }
+
+            XButton {
+                width: 50;
+                height: 25;
+                x: parent.width / 2 + (parent.width / 2 - width / 2) / 2;
+                anchors.bottom: parent.bottom;
+                anchors.bottomMargin: 10;
+                hint.text: "关闭";
+                hint.color: "#000000";
+                hint.font.pixelSize: 18;
+                onButtonClick: function() {
+                    popup_edit_dialog.close();
+                }
+            }
+        }
+        function open(x, y, debugStatus, editCB, debugCB) {
+            if (visible) {
+                return;
+            }
+            visible = true;
+            textinput_edit_dialog_x.inputText = x;
+            textinput_edit_dialog_y.inputText = y;
+            textinput_edit_dialog_x.inputFocus = false;
+            textinput_edit_dialog_y.inputFocus = false;
+            debug = debugStatus;
+            editCallback = editCB;
+            debugCallback = debugCB;
         }
     }
 
